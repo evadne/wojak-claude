@@ -1,0 +1,6 @@
+{
+  "status": "infrastructure_error",
+  "reason": "CLI timeout",
+  "id": "reconstruct_open-2",
+  "elapsed_seconds": 300.026
+}

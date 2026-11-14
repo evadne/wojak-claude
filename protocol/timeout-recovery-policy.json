@@ -1,0 +1,7 @@
+{
+  "registered_after": "The first open reconstruction completed; the second reached the 300-second process deadline while still reporting thinking-token progress. The explicit-condition outcomes were not yet known.",
+  "rule": "For each reconstruction call that ends with infrastructure_error and reason CLI timeout, make at most one fresh replacement call with the identical model, effort, system prompt, user prompt, images, tool settings and budget, increasing only the process deadline to 600 seconds. Never rerun a completed call based on its geometry or answer.",
+  "reporting": "Keep original attempts and replacements in separate run directories. Report timed-out attempts explicitly. The replacements are fresh draws, not continuations or recovered answers. No model failure or quality score is assigned to a timed-out call. Report CLI costs for completed calls separately from unknown costs of aborted calls.",
+  "maximum_replacement_calls": 3,
+  "replacement_timeout_seconds": 600
+}

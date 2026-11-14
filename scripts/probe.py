@@ -103,6 +103,7 @@ def main():
     parser.add_argument("protocol", type=Path)
     parser.add_argument("--condition", action="append", help="Run only this condition (repeatable)")
     parser.add_argument("--repeats", type=int, help="Override repetitions; recorded in run metadata")
+    parser.add_argument("--timeout-seconds", type=int, help="Override the process deadline; recorded in run metadata")
     parser.add_argument("--label", default="run")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
@@ -110,6 +111,10 @@ def main():
     protocol = json.loads(path.read_text())
     if args.repeats is not None:
         protocol["repeats"] = args.repeats
+    if args.timeout_seconds is not None:
+        if args.timeout_seconds < 1:
+            parser.error("Timeout must be positive")
+        protocol["timeout_seconds"] = args.timeout_seconds
     conditions = [c for c in protocol["conditions"] if not args.condition or c["id"] in args.condition]
     if not conditions or protocol["repeats"] < 1:
         parser.error("Select at least one condition and one repetition")

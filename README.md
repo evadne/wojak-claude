@@ -44,6 +44,8 @@ This complicates a simple perception-failure account. The sculpture-only respons
 
 [The follow-up protocol](protocol/reconstruction.json) compares two open reconstruction sessions with two sessions supplying an explicit plug-in-own-socket constraint. It was committed after reading the image-ingestion pilot and before collecting reconstruction answers. The generator returns Blender Python without tools or rendered feedback; source and fixed front/oblique renders will be assessed together. This tests a restricted open-loop workflow rather than the original unknown modelling workflow.
 
+The second open call exceeded the original 300-second process deadline while still reporting thinking progress. A [recovery policy](protocol/timeout-recovery-policy.json) was committed before the explicit-condition outcomes were known: one fresh replacement per timed-out call, with the same inputs and settings and a 600-second process deadline. Both attempts are retained; timeouts are not geometric failures and their unreported costs are not counted as zero.
+
 ## Availability
 
 The local Claude Code login needed renewal. A text-only availability check subsequently returned `PROBE_OK` from `claude-fable-5-2` via the first-party provider. No interpretation result is implied by that check.
