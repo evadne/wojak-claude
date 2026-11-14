@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "purpose": "Test negative-volume construction with a fully specified text-only receptacle, separately from interpreting an image or selecting distinguishing visual features.",
+  "model": "claude-fable-5-2",
+  "effort": "high",
+  "repeats": 2,
+  "concurrency": 2,
+  "max_budget_usd_per_call": 2.0,
+  "timeout_seconds": 600,
+  "system_prompt": "You are creating Blender Python geometry from specified requirements. Use only the requirements in this conversation. Return exactly one JSON object without Markdown fences, with keys script (the complete Python source as a string), description (a short string), and uncertainty (an array of strings).",
+  "conditions": [
+    {
+      "id": "construct_receptacle",
+      "images": [],
+      "prompt": "Write a self-contained Blender 5.2 Python script for a rectangular receptacle block and two matching test prongs. Use the following exact model units; do not rescale. The block is centred at the origin and has dimensions X=32, Y=16, Z=24. Its front face is Y=-8. Two blind rectangular receptacles open on that front face, centred at X=-5 and X=5, Z=0. Each has clear internal width 2.4 along X, height 6.4 along Z, and depth 8 along +Y, ending at Y=0. Model these as actual empty cavities, not coloured marks or solid surface details. Create two rectangular prongs with dimensions X=2, Y=7, Z=6, at their fully inserted centres (-5,-4.5,0) and (5,-4.5,0). The prongs must occupy the empty cavities without intersecting the plastic block. Create exactly three final mesh objects named socket_body, pin_left, and pin_right. Apply any Boolean modifiers and remove construction cutters. Clear the starting scene. Create geometry only: no cameras, lights, rendering, file reads or writes, external assets, add-ons, shell commands or network access. You may import only bpy, math and mathutils. Return the script, a short description, and uncertainties as the requested JSON object."
+    }
+  ],
+  "scoring_plan": {
+    "primary": "Inspect and execute the script unchanged. Measure prong/plastic overlap using the calibrated exact Boolean intersection checker, without model judgement.",
+    "secondary": [
+      "Expected socket volume 12042.24 cubic model units",
+      "Body bounds [-16,-8,-12] to [16,8,12]",
+      "Each prong volume 84 cubic model units",
+      "Prong bounds [-6,-8,-3] to [-4,-1,3], and [4,-8,-3] to [6,-1,3]",
+      "Exactly the three named final mesh objects",
+      "Closed manifold evaluated operands"
+    ],
+    "execution": "Review source before execution. Retain raw answer, script, execution failure if any, fixed renders and Blender scene. Never repair a scene silently."
+  },
+  "recovery_policy": {
+    "maximum_replacements_per_infrastructure_failure": 1,
+    "rule": "One fresh retained replacement for infrastructure-incomplete calls, with identical settings and deadline. Never rerun completed answers based on quality."
+  },
+  "limitations": [
+    "Two text-only examples test available construction capability under explicit functional requirements, not a model-wide success rate.",
+    "This prompt states the cavity geometry and functional requirement directly. It does not demonstrate spontaneous retention of affordances when reproducing a picture.",
+    "No inference about proprietary internal architecture is justified.",
+    "Collision-free final placement does not alone establish an insertion path, tolerances, electrical safety or manufacturability.",
+    "Model units are arbitrary, not a real connector standard."
+  ]
+}
