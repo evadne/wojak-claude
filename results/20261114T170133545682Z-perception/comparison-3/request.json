@@ -1,0 +1,45 @@
+{
+  "condition": "comparison",
+  "repeat": 3,
+  "prompt": "Image 1 is a drawing. Images 2 and 3 are two views of a sculpture. Compare what they depict. Describe substantive similarities and differences in the objects, their arrangement, and their connections. Support differences with visible evidence and distinguish observation from inference. Do not assume that either depiction is correct. Return a JSON object with keys similarities (array of strings), differences (array of objects with observation and evidence strings), interpretation (string), and uncertainty (array of strings).",
+  "system_prompt": "You are taking part in an image interpretation study. Use only the images and text in this conversation. Give your own assessment. Do not invent hidden evidence. Return the requested JSON object without Markdown fences.",
+  "images": [
+    {
+      "path": "inputs/reference.png",
+      "sha256": "96778866f7dd9388518e8a271a28bd159f9ec9b642824856205ca5b620060490"
+    },
+    {
+      "path": "inputs/model-front.jpg",
+      "sha256": "75be5051aab50f016c9e4848fc11f5e92f99e1a7e2c71c3d419ceba9d88e7e56"
+    },
+    {
+      "path": "inputs/model-side.jpg",
+      "sha256": "62e32153b1846960c4a4d0e0035afb082f0f46242eea3b255a7a55f40b53bd05"
+    }
+  ],
+  "command": [
+    "claude",
+    "--safe-mode",
+    "-p",
+    "--model",
+    "claude-fable-5-2",
+    "--effort",
+    "high",
+    "--tools",
+    "",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-session-persistence",
+    "--output-format",
+    "stream-json",
+    "--input-format",
+    "stream-json",
+    "--verbose",
+    "--max-budget-usd",
+    "1.5",
+    "--system-prompt",
+    "You are taking part in an image interpretation study. Use only the images and text in this conversation. Give your own assessment. Do not invent hidden evidence. Return the requested JSON object without Markdown fences."
+  ],
+  "started_at": "2026-11-14T17:02:11.172513+00:00"
+}

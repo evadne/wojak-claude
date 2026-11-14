@@ -1,0 +1,149 @@
+{
+  "status": "completed",
+  "answer": "{\"description\":\"A simple black-and-white line drawing in the style of the 'Wojak' meme, with blue as the only colour, used for tears. A lumpy, rounded body with sloping shoulders fills the lower half of the frame. Where the neck and head would be, the form narrows and becomes a tall, upright power strip tilted slightly to the right, with two standard North American three-prong outlets on its front. A thick cord leaves the top of the strip, arcs up and over to the left in a large loop, and ends in a plug that is inserted into the left side of the strip itself. A small face is drawn low on the figure, roughly at chest height below the strip: two uneven eyes, furrowed brows, a small nose and a downturned mouth, with blue tears running from both eyes. A few loose lines at the bottom suggest the body's lower edge or the ground.\",\"visible_evidence\":[\"Black outline drawing on a white background, with blue used only for tear streaks\",\"A rounded, hunched body shape with shoulder-like slopes on both sides\",\"A vertical power strip with two three-prong outlets in place of the neck and head\",\"A cord leaving the top of the power strip and looping over to the left\",\"The cord's plug inserted into the side of the same power strip\",\"A small, sad face with furrowed brows and a frowning mouth, placed low on the figure\",\"Blue tears running down from both eyes\",\"A few sketchy lines at the bottom edge, including a small squiggle\"],\"interpretation\":\"The joke appears to combine a crying Wojak figure with the familiar gag of a power strip plugged into itself. A strip plugged into itself forms a closed loop with no outside power source, so it supplies nothing. Fusing that with a weeping character suggests someone trying to recharge or sustain themselves from their own depleted resources, which reads as futility, burnout, isolation or self-defeating circular behaviour. The humour comes from the absurd body-object merge and from the contrast between the deadpan 'infinite power' idea and the figure's evident misery. This reading is inferred from the drawing alone, since there is no caption.\",\"uncertainty\":[\"There is no caption or text, so the intended message (burnout, loneliness, circular reasoning, or something else) cannot be confirmed\",\"It is unclear whether the power strip is meant to be the figure's head or neck, or an object emerging from the body\",\"The face sits unusually low, so it is ambiguous whether it is on the torso or whether the whole lower mass is meant to be a distorted head\",\"The lines at the bottom are ambiguous and could be the body's lower edge, a surface, or a puddle\",\"The plug appears to enter the side of the strip rather than one of the two visible front outlets, so the exact connection point is uncertain\",\"The image may be cropped from a larger meme with context that is not shown\"]}",
+  "parsed_answer": {
+    "description": "A simple black-and-white line drawing in the style of the 'Wojak' meme, with blue as the only colour, used for tears. A lumpy, rounded body with sloping shoulders fills the lower half of the frame. Where the neck and head would be, the form narrows and becomes a tall, upright power strip tilted slightly to the right, with two standard North American three-prong outlets on its front. A thick cord leaves the top of the strip, arcs up and over to the left in a large loop, and ends in a plug that is inserted into the left side of the strip itself. A small face is drawn low on the figure, roughly at chest height below the strip: two uneven eyes, furrowed brows, a small nose and a downturned mouth, with blue tears running from both eyes. A few loose lines at the bottom suggest the body's lower edge or the ground.",
+    "visible_evidence": [
+      "Black outline drawing on a white background, with blue used only for tear streaks",
+      "A rounded, hunched body shape with shoulder-like slopes on both sides",
+      "A vertical power strip with two three-prong outlets in place of the neck and head",
+      "A cord leaving the top of the power strip and looping over to the left",
+      "The cord's plug inserted into the side of the same power strip",
+      "A small, sad face with furrowed brows and a frowning mouth, placed low on the figure",
+      "Blue tears running down from both eyes",
+      "A few sketchy lines at the bottom edge, including a small squiggle"
+    ],
+    "interpretation": "The joke appears to combine a crying Wojak figure with the familiar gag of a power strip plugged into itself. A strip plugged into itself forms a closed loop with no outside power source, so it supplies nothing. Fusing that with a weeping character suggests someone trying to recharge or sustain themselves from their own depleted resources, which reads as futility, burnout, isolation or self-defeating circular behaviour. The humour comes from the absurd body-object merge and from the contrast between the deadpan 'infinite power' idea and the figure's evident misery. This reading is inferred from the drawing alone, since there is no caption.",
+    "uncertainty": [
+      "There is no caption or text, so the intended message (burnout, loneliness, circular reasoning, or something else) cannot be confirmed",
+      "It is unclear whether the power strip is meant to be the figure's head or neck, or an object emerging from the body",
+      "The face sits unusually low, so it is ambiguous whether it is on the torso or whether the whole lower mass is meant to be a distorted head",
+      "The lines at the bottom are ambiguous and could be the body's lower edge, a surface, or a puddle",
+      "The plug appears to enter the side of the strip rather than one of the two visible front outlets, so the exact connection point is uncertain",
+      "The image may be cropped from a larger meme with context that is not shown"
+    ]
+  },
+  "cli_result": {
+    "duration_api_ms": 14397,
+    "stop_reason": "end_turn",
+    "session_id": "9d8125e0-15b7-4583-b0c8-3137d61ec43b",
+    "total_cost_usd": 0.0430252,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 1046,
+      "output_tokens": 1070,
+      "output_tokens_details": {
+        "thinking_tokens": 163
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1070,
+          "cache_read_input_tokens": 1046,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-fable-5-2": {
+        "inputTokens": 2,
+        "outputTokens": 1070,
+        "cacheReadInputTokens": 1046,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0430252,
+        "contextWindow": 200000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 163,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 0,
+        "canonicalModel": "claude-fable-5-2",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "{\"description\":\"A simple black-and-white line drawing in the style of the 'Wojak' meme, with blue as the only colour, used for tears. A lumpy, rounded body with sloping shoulders fills the lower half of the frame. Where the neck and head would be, the form narrows and becomes a tall, upright power strip tilted slightly to the right, with two standard North American three-prong outlets on its front. A thick cord leaves the top of the strip, arcs up and over to the left in a large loop, and ends in a plug that is inserted into the left side of the strip itself. A small face is drawn low on the figure, roughly at chest height below the strip: two uneven eyes, furrowed brows, a small nose and a downturned mouth, with blue tears running from both eyes. A few loose lines at the bottom suggest the body's lower edge or the ground.\",\"visible_evidence\":[\"Black outline drawing on a white background, with blue used only for tear streaks\",\"A rounded, hunched body shape with shoulder-like slopes on both sides\",\"A vertical power strip with two three-prong outlets in place of the neck and head\",\"A cord leaving the top of the power strip and looping over to the left\",\"The cord's plug inserted into the side of the same power strip\",\"A small, sad face with furrowed brows and a frowning mouth, placed low on the figure\",\"Blue tears running down from both eyes\",\"A few sketchy lines at the bottom edge, including a small squiggle\"],\"interpretation\":\"The joke appears to combine a crying Wojak figure with the familiar gag of a power strip plugged into itself. A strip plugged into itself forms a closed loop with no outside power source, so it supplies nothing. Fusing that with a weeping character suggests someone trying to recharge or sustain themselves from their own depleted resources, which reads as futility, burnout, isolation or self-defeating circular behaviour. The humour comes from the absurd body-object merge and from the contrast between the deadpan 'infinite power' idea and the figure's evident misery. This reading is inferred from the drawing alone, since there is no caption.\",\"uncertainty\":[\"There is no caption or text, so the intended message (burnout, loneliness, circular reasoning, or something else) cannot be confirmed\",\"It is unclear whether the power strip is meant to be the figure's head or neck, or an object emerging from the body\",\"The face sits unusually low, so it is ambiguous whether it is on the torso or whether the whole lower mass is meant to be a distorted head\",\"The lines at the bottom are ambiguous and could be the body's lower edge, a surface, or a puddle\",\"The plug appears to enter the side of the strip rather than one of the two visible front outlets, so the exact connection point is uncertain\",\"The image may be cropped from a larger meme with context that is not shown\"]}",
+    "ttft_ms": 4413,
+    "type": "result",
+    "duration_ms": 14549,
+    "uuid": "bf9f4498-fcb7-4809-a24c-67fb33af162d",
+    "ttft_stream_ms": 2438,
+    "time_to_request_ms": 150,
+    "first_content_frame_ms": 2439,
+    "queued_turn_count": 0,
+    "result_index": 0,
+    "model_usage_since_last_result": {
+      "claude-fable-5-2": {
+        "inputTokens": 2,
+        "outputTokens": 1070,
+        "cacheReadInputTokens": 1046,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0430252,
+        "contextWindow": 200000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 163,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 0,
+        "canonicalModel": "claude-fable-5-2",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "credential_expires_at": "2026-12-14T11:28:49.458Z"
+  },
+  "exit_code": 0,
+  "id": "reference_open-3",
+  "elapsed_seconds": 15.296
+}

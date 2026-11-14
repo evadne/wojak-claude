@@ -1,0 +1,41 @@
+{
+  "condition": "model_open",
+  "repeat": 2,
+  "prompt": "These images show two views of the same object. Describe it concretely, including the objects and their arrangement. Explain any apparent visual joke. Separate what is visible from what you infer. Return a JSON object with keys description (string), visible_evidence (array of strings), interpretation (string), and uncertainty (array of strings).",
+  "system_prompt": "You are taking part in an image interpretation study. Use only the images and text in this conversation. Give your own assessment. Do not invent hidden evidence. Return the requested JSON object without Markdown fences.",
+  "images": [
+    {
+      "path": "inputs/model-front.jpg",
+      "sha256": "75be5051aab50f016c9e4848fc11f5e92f99e1a7e2c71c3d419ceba9d88e7e56"
+    },
+    {
+      "path": "inputs/model-side.jpg",
+      "sha256": "62e32153b1846960c4a4d0e0035afb082f0f46242eea3b255a7a55f40b53bd05"
+    }
+  ],
+  "command": [
+    "claude",
+    "--safe-mode",
+    "-p",
+    "--model",
+    "claude-fable-5-2",
+    "--effort",
+    "high",
+    "--tools",
+    "",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-session-persistence",
+    "--output-format",
+    "stream-json",
+    "--input-format",
+    "stream-json",
+    "--verbose",
+    "--max-budget-usd",
+    "1.5",
+    "--system-prompt",
+    "You are taking part in an image interpretation study. Use only the images and text in this conversation. Give your own assessment. Do not invent hidden evidence. Return the requested JSON object without Markdown fences."
+  ],
+  "started_at": "2026-11-14T17:01:48.978509+00:00"
+}

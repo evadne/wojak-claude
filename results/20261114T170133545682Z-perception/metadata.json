@@ -1,0 +1,63 @@
+{
+  "protocol_path": "protocol/perception.json",
+  "protocol_sha256": "fc5a50368ef2a5d8e1f430fc81c7cd8729db9363c6ee6854b6035fb70535e6ca",
+  "effective_protocol": {
+    "version": 1,
+    "purpose": "Distinguish spontaneous reference interpretation, interpretation of the published geometry, and detection of differences when both are visible.",
+    "model": "claude-fable-5-2",
+    "effort": "high",
+    "repeats": 3,
+    "concurrency": 3,
+    "max_budget_usd_per_call": 1.5,
+    "timeout_seconds": 240,
+    "system_prompt": "You are taking part in an image interpretation study. Use only the images and text in this conversation. Give your own assessment. Do not invent hidden evidence. Return the requested JSON object without Markdown fences.",
+    "conditions": [
+      {
+        "id": "reference_open",
+        "images": [
+          "reference.png"
+        ],
+        "prompt": "Describe this image concretely, including the objects and their arrangement. Explain any apparent visual joke. Separate what is visible from what you infer. Return a JSON object with keys description (string), visible_evidence (array of strings), interpretation (string), and uncertainty (array of strings)."
+      },
+      {
+        "id": "model_open",
+        "images": [
+          "model-front.jpg",
+          "model-side.jpg"
+        ],
+        "prompt": "These images show two views of the same object. Describe it concretely, including the objects and their arrangement. Explain any apparent visual joke. Separate what is visible from what you infer. Return a JSON object with keys description (string), visible_evidence (array of strings), interpretation (string), and uncertainty (array of strings)."
+      },
+      {
+        "id": "comparison",
+        "images": [
+          "reference.png",
+          "model-front.jpg",
+          "model-side.jpg"
+        ],
+        "prompt": "Image 1 is a drawing. Images 2 and 3 are two views of a sculpture. Compare what they depict. Describe substantive similarities and differences in the objects, their arrangement, and their connections. Support differences with visible evidence and distinguish observation from inference. Do not assume that either depiction is correct. Return a JSON object with keys similarities (array of strings), differences (array of objects with observation and evidence strings), interpretation (string), and uncertainty (array of strings)."
+      }
+    ],
+    "scoring_plan": {
+      "reference_open": "Record whether the answer spontaneously identifies the strip's own plug as occupying its own socket, says it is disconnected, or is uncertain.",
+      "model_open": "Record whether the answer observes the thickened cable end entering the head beside the strip, asserts socket insertion despite that geometry, or is uncertain.",
+      "comparison": "Record whether the answer explicitly detects a changed plug attachment or placement. Do not count a difference in style, proportions, or socket detail as detection.",
+      "method": "Manual assessment of complete answers, retained beside raw responses. Do not use keyword counts as ground truth. Record ambiguity and contrary evidence."
+    },
+    "limitations": [
+      "Three fresh sessions per condition are descriptive probes of one item, not an estimate of model-wide reliability.",
+      "The original drawing is a familiar meme; recognition may reflect learnt associations as well as the supplied pixels.",
+      "The comparison condition cues attention to connections; the open conditions do not name the plug, strip, socket, or expected failure.",
+      "Images are labelled by order, not randomised. The drawing and sculpture are visually distinguishable, so the comparison is not blinded to medium.",
+      "The original benchmark prompt, code, revision history and model settings are unavailable.",
+      "Claude Code safe mode, a replacement system prompt, no built-in tools, no MCP servers, and fresh non-persistent sessions limit contextual contamination; this is not a replication of the original agent harness.",
+      "Sampling temperature and random seed are not exposed by this CLI invocation; no claim of statistically independent draws is made."
+    ]
+  },
+  "cli_version": "2.1.321 (Claude Code)",
+  "git_commit": "310ac6f91b3ecee7de4cef19b5747a9fb72439f1",
+  "selected_conditions": [
+    "reference_open",
+    "model_open",
+    "comparison"
+  ]
+}

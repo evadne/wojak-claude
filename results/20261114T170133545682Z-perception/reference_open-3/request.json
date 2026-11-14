@@ -1,0 +1,37 @@
+{
+  "condition": "reference_open",
+  "repeat": 3,
+  "prompt": "Describe this image concretely, including the objects and their arrangement. Explain any apparent visual joke. Separate what is visible from what you infer. Return a JSON object with keys description (string), visible_evidence (array of strings), interpretation (string), and uncertainty (array of strings).",
+  "system_prompt": "You are taking part in an image interpretation study. Use only the images and text in this conversation. Give your own assessment. Do not invent hidden evidence. Return the requested JSON object without Markdown fences.",
+  "images": [
+    {
+      "path": "inputs/reference.png",
+      "sha256": "96778866f7dd9388518e8a271a28bd159f9ec9b642824856205ca5b620060490"
+    }
+  ],
+  "command": [
+    "claude",
+    "--safe-mode",
+    "-p",
+    "--model",
+    "claude-fable-5-2",
+    "--effort",
+    "high",
+    "--tools",
+    "",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-session-persistence",
+    "--output-format",
+    "stream-json",
+    "--input-format",
+    "stream-json",
+    "--verbose",
+    "--max-budget-usd",
+    "1.5",
+    "--system-prompt",
+    "You are taking part in an image interpretation study. Use only the images and text in this conversation. Give your own assessment. Do not invent hidden evidence. Return the requested JSON object without Markdown fences."
+  ],
+  "started_at": "2026-11-14T17:01:33.580680+00:00"
+}

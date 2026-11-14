@@ -1,0 +1,11 @@
+{
+  "calls": 1,
+  "completed": 1,
+  "cli_reported_cost_usd": 0.069032,
+  "runs": [
+    {
+      "id": "reference_open-1",
+      "status": "completed"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "calls": 9,
+  "completed": 9,
+  "cli_reported_cost_usd": 1.022912,
+  "runs": [
+    {
+      "id": "comparison-1",
+      "status": "completed"
+    },
+    {
+      "id": "comparison-2",
+      "status": "completed"
+    },
+    {
+      "id": "comparison-3",
+      "status": "completed"
+    },
+    {
+      "id": "model_open-1",
+      "status": "completed"
+    },
+    {
+      "id": "model_open-2",
+      "status": "completed"
+    },
+    {
+      "id": "model_open-3",
+      "status": "completed"
+    },
+    {
+      "id": "reference_open-1",
+      "status": "completed"
+    },
+    {
+      "id": "reference_open-2",
+      "status": "completed"
+    },
+    {
+      "id": "reference_open-3",
+      "status": "completed"
+    }
+  ]
+}
