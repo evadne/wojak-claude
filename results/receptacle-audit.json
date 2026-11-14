@@ -1,0 +1,171 @@
+{
+  "method": "Exact Boolean intersection of evaluated meshes in their retained placements; no source geometry repair or saving",
+  "units": "Blender model units cubed, not physical millimetres",
+  "script_sha256": "2ac782435cf5e4819ef1593f78feed0647b5cb69f7f48b60c927863e63c1c40b",
+  "protocol_sha256": "b6eb507dd3c3aad1cdb830cf9527a8933bca4d985859a7e27f788a72b15f8fd0",
+  "blender_version": "5.2.1 LTS",
+  "volume_tolerance": 0.0001,
+  "calibration": [
+    {
+      "control": "solid_block",
+      "expected_intersection_volume_per_prong": 84.0,
+      "passed": true,
+      "measurements": [
+        {
+          "body": "ControlBody",
+          "prong": "ControlProng0",
+          "body_volume": 12288.0,
+          "prong_volume": 84.0,
+          "intersection_volume": 84.0,
+          "fraction_of_prong_inside_plastic": 1.0,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        },
+        {
+          "body": "ControlBody",
+          "prong": "ControlProng1",
+          "body_volume": 12288.0,
+          "prong_volume": 84.0,
+          "intersection_volume": 84.0,
+          "fraction_of_prong_inside_plastic": 1.0,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        }
+      ]
+    },
+    {
+      "control": "shallow_recess",
+      "expected_intersection_volume_per_prong": 60.0,
+      "passed": true,
+      "measurements": [
+        {
+          "body": "ControlBody",
+          "prong": "ControlProng0",
+          "body_volume": 12226.559998168945,
+          "prong_volume": 84.0,
+          "intersection_volume": 60.0,
+          "fraction_of_prong_inside_plastic": 0.7142857142857143,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        },
+        {
+          "body": "ControlBody",
+          "prong": "ControlProng1",
+          "body_volume": 12226.559998168945,
+          "prong_volume": 84.0,
+          "intersection_volume": 60.0,
+          "fraction_of_prong_inside_plastic": 0.7142857142857143,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        }
+      ]
+    },
+    {
+      "control": "clear_receptacle",
+      "expected_intersection_volume_per_prong": 0.0,
+      "passed": true,
+      "measurements": [
+        {
+          "body": "ControlBody",
+          "prong": "ControlProng0",
+          "body_volume": 12042.239992675783,
+          "prong_volume": 84.0,
+          "intersection_volume": 0.0,
+          "fraction_of_prong_inside_plastic": 0.0,
+          "plastic_penetration": false,
+          "operand_closed_manifold": true
+        },
+        {
+          "body": "ControlBody",
+          "prong": "ControlProng1",
+          "body_volume": 12042.239992675783,
+          "prong_volume": 84.0,
+          "intersection_volume": 0.0,
+          "fraction_of_prong_inside_plastic": 0.0,
+          "plastic_penetration": false,
+          "operand_closed_manifold": true
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "explicit-original",
+      "scene": "results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/scene.blend",
+      "scene_sha256": "d8b51bac23754c6cd19c5f50342f2b8b737ef2504375df26a32ad4b578787bca",
+      "source_geometry_changed": false,
+      "measurements": [
+        {
+          "body": "PowerStrip",
+          "prong": "ProngL",
+          "body_volume": 5153.351678192199,
+          "prong_volume": 1.547002497385292,
+          "intersection_volume": 1.130499756180118,
+          "fraction_of_prong_inside_plastic": 0.7307678934525721,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        },
+        {
+          "body": "PowerStrip",
+          "prong": "ProngR",
+          "body_volume": 5153.351678192199,
+          "prong_volume": 1.5470024973852396,
+          "intersection_volume": 1.130500154814702,
+          "fraction_of_prong_inside_plastic": 0.7307681511345234,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        },
+        {
+          "body": "PowerStrip",
+          "prong": "ProngGround",
+          "body_volume": 5153.351678192199,
+          "prong_volume": 1.9499981105415602,
+          "intersection_volume": 1.4249999147130175,
+          "fraction_of_prong_inside_plastic": 0.7307698951140325,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        }
+      ],
+      "all_prongs_clear_of_body": false
+    },
+    {
+      "id": "explicit-replacement",
+      "scene": "results/20261114T171224010444Z-explicit-timeout-replacement-1/reconstruct_explicit-1/geometry/scene.blend",
+      "scene_sha256": "0a35c8694aa3206faa03d168532b2ea600c0d4eb423a1d79b81dba73a75d9ad1",
+      "source_geometry_changed": false,
+      "measurements": [
+        {
+          "body": "PowerStrip",
+          "prong": "PlugBladeL",
+          "body_volume": 4474.246566170492,
+          "prong_volume": 3.053273921608273,
+          "intersection_volume": 2.0991258935647563,
+          "fraction_of_prong_inside_plastic": 0.6875000237315978,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        },
+        {
+          "body": "PowerStrip",
+          "prong": "PlugBladeR",
+          "body_volume": 4474.246566170492,
+          "prong_volume": 3.0532710144252624,
+          "intersection_volume": 2.0991242355455313,
+          "fraction_of_prong_inside_plastic": 0.6875001353067453,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        },
+        {
+          "body": "PowerStrip",
+          "prong": "PlugGroundPin",
+          "body_volume": 4474.246566170492,
+          "prong_volume": 3.2975350432276436,
+          "intersection_volume": 2.2670552134220885,
+          "fraction_of_prong_inside_plastic": 0.6874999609414564,
+          "plastic_penetration": true,
+          "operand_closed_manifold": true
+        }
+      ],
+      "all_prongs_clear_of_body": false
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "bounds_min": [
+    -28.456249237060547,
+    -22.899999618530273,
+    0.0
+  ],
+  "bounds_max": [
+    28.100000381469727,
+    20.0,
+    99.46083068847656
+  ],
+  "geometry_object_count": 42,
+  "blender_version": "5.2.1 LTS",
+  "wrapper": "scripts/render_generated.py",
+  "geometry_corrections": [],
+  "wrapper_sha256": "3ee74671f3d152469c53c77705a9d9827af4a3d483eb6d34ec6fea54c64e9f06",
+  "generated_source_sha256": "3686ec80f3c41b99eddcad5e6f011ba55162703fe6fba8d8a5343adbd84f0294"
+}

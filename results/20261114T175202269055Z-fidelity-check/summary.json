@@ -1,0 +1,24 @@
+{
+  "calls": 4,
+  "completed": 4,
+  "cli_reported_cost_usd": 4.678871,
+  "calls_with_unreported_cost": 0,
+  "runs": [
+    {
+      "id": "reconstruct_fidelity_check-1",
+      "status": "completed"
+    },
+    {
+      "id": "reconstruct_fidelity_check-2",
+      "status": "completed"
+    },
+    {
+      "id": "reconstruct_open-1",
+      "status": "completed"
+    },
+    {
+      "id": "reconstruct_open-2",
+      "status": "completed"
+    }
+  ]
+}
