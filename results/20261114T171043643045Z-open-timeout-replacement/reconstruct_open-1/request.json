@@ -1,0 +1,37 @@
+{
+  "condition": "reconstruct_open",
+  "repeat": 1,
+  "prompt": "Write a self-contained Blender 5.2 Python script that builds a 3D sculpture corresponding to the drawing. Match the visible parts, their arrangement and overall form. The geometry may be stylised. Use an overall height of approximately 100 Blender units. Z is up; the front of the sculpture faces negative Y. Create geometry only: no cameras, lights, rendering, file reads or writes, external assets, add-ons, shell commands or network access. You may import only bpy, math and mathutils. Clear the starting scene and build the sculpture. Overlapping solid meshes are acceptable for this visual study; watertightness will not be scored. Return the script, a short description, and uncertainties as the requested JSON object.",
+  "system_prompt": "You are creating a Blender Python script from a reference image. Use only the image and instructions in this conversation. Return exactly one JSON object without Markdown fences, with keys script (the complete Python source as a string), description (a short string), and uncertainty (an array of strings).",
+  "images": [
+    {
+      "path": "inputs/reference.png",
+      "sha256": "96778866f7dd9388518e8a271a28bd159f9ec9b642824856205ca5b620060490"
+    }
+  ],
+  "command": [
+    "claude",
+    "--safe-mode",
+    "-p",
+    "--model",
+    "claude-fable-5-2",
+    "--effort",
+    "high",
+    "--tools",
+    "",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-session-persistence",
+    "--output-format",
+    "stream-json",
+    "--input-format",
+    "stream-json",
+    "--verbose",
+    "--max-budget-usd",
+    "2.0",
+    "--system-prompt",
+    "You are creating a Blender Python script from a reference image. Use only the image and instructions in this conversation. Return exactly one JSON object without Markdown fences, with keys script (the complete Python source as a string), description (a short string), and uncertainty (an array of strings)."
+  ],
+  "started_at": "2026-11-14T17:10:43.681400+00:00"
+}

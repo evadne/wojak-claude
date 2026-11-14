@@ -1,0 +1,8 @@
+results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/generated.py:25: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+00:00.759  render           | Saved: '/Users/evadne/Projects/evadne/wojak-bench/results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/front.png'
+00:00.811  render           | Saved: '/Users/evadne/Projects/evadne/wojak-bench/results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/oblique.png'
+Info: Saved as "scene.blend"
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

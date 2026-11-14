@@ -1,0 +1,23 @@
+{
+  "calls": 4,
+  "completed": 2,
+  "cli_reported_cost_usd": 1.94183,
+  "runs": [
+    {
+      "id": "reconstruct_explicit-1",
+      "status": "infrastructure_error"
+    },
+    {
+      "id": "reconstruct_explicit-2",
+      "status": "completed"
+    },
+    {
+      "id": "reconstruct_open-1",
+      "status": "completed"
+    },
+    {
+      "id": "reconstruct_open-2",
+      "status": "infrastructure_error"
+    }
+  ]
+}
