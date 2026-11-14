@@ -1,6 +1,7 @@
 """Run inside Blender after reviewing a generated script; render fixed views."""
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -62,11 +63,13 @@ def main():
         camera.rotation_euler = (centre - camera.location).to_track_quat("-Z", "Y").to_euler()
         scene.render.filepath = str((args.out / (name + ".png")).resolve())
         bpy.ops.render.render(write_still=True)
-    bpy.ops.wm.save_as_mainfile(filepath=str((args.out / "scene.blend").resolve()))
+    bpy.ops.wm.save_as_mainfile(filepath=str((args.out / "scene.blend").resolve()), compress=True)
     (args.out / "render-metadata.json").write_text(json.dumps({
         "bounds_min": list(lower), "bounds_max": list(upper),
         "geometry_object_count": len(visible), "blender_version": bpy.app.version_string,
         "wrapper": "scripts/render_generated.py", "geometry_corrections": [],
+        "wrapper_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "generated_source_sha256": hashlib.sha256(source.encode()).hexdigest(),
     }, indent=2) + "\n")
 
 
