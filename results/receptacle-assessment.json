@@ -1,0 +1,39 @@
+{
+  "question": "Does a depicted socket contain actual space for the retained prongs, independently of the attachment relation?",
+  "evidence": {
+    "retained_visual_replicas": "results/receptacle-audit.json",
+    "text_only_controls": "results/receptacle-control-audit.json"
+  },
+  "retained_visual_replicas": {
+    "cases": 2,
+    "prior_attachment_score": "Both passed the depicted plug-on-front-socket criterion",
+    "prongs_measured": 6,
+    "prongs_with_positive_plastic_intersection": 6,
+    "intersection_fraction_by_case": {"explicit-original": 0.730769, "explicit-replacement": 0.6875},
+    "source_observation": "The strip housing remains a solid box/loft. Socket marks and plates are positive surface geometry. No corresponding receiving cavities are removed from the body."
+  },
+  "text_only_controls": {
+    "run": "20261114T181143378123Z-receptacle-construction",
+    "completed_calls": 2,
+    "geometry_repairs": [],
+    "cases_with_zero_prong_plastic_intersection": 2,
+    "cases_passing_all_registered_dimension_volume_and_object_checks": 2,
+    "measured_socket_volume_per_case": 12042.240010986323,
+    "expected_socket_volume": 12042.24,
+    "measured_prong_volume": 84.0,
+    "source_observation": "Both responses construct blind cavities directly in a closed manifold mesh rather than using surface marks or Boolean modifiers."
+  },
+  "verification": "Exact Boolean intersection of evaluated meshes, calibrated on a solid block (84 volume units of collision per prong), a shallow recess (60) and a clear receptacle (0). Both audit executions pass all three calibration types. Original scene hashes remain unchanged.",
+  "inspection_views": {
+    "visual_replica_under_plug": "20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/under-plug.png",
+    "text_control_openings": "20261114T181143378123Z-receptacle-construction/construct_receptacle-1/geometry/open-receptacles.png",
+    "method": "Named occluding parts are hidden only for the derived view; the retained source scene and its geometry are not changed or saved over. Metadata records every hidden object."
+  },
+  "interpretation": [
+    "Relational fidelity and volumetric receptacle geometry are independent assessment axes: a visually seated plug can still collide with solid plastic.",
+    "These two text-only controls demonstrate available cavity-construction capability under an explicit functional specification. They do not demonstrate spontaneous preservation of that property from an image.",
+    "The visual reconstruction protocol allowed overlapping solids and excluded mechanical fit. The collision audit adds a separate functional criterion without changing the previous attachment scores or claiming prior instruction noncompliance.",
+    "The evidence supports investigating why image-based reconstruction selected surface symbolism while direct functional requirements produced negative-volume geometry. It does not uniquely identify an internal model mechanism or establish the cause of the original author's unavailable mesh.",
+    "A clear final pose is necessary but insufficient for a general insertion-path, manufacturing or electrical claim."
+  ]
+}

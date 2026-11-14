@@ -30,6 +30,28 @@ The primary observation is the depicted receiving point of the returning connect
 
 The assessor knows the conditions. This small cohort can reveal examples and counterexamples; it cannot establish a reliable treatment effect. More checking instructions also change prompt length and attention, so it does not isolate verbosity itself. No rendered feedback is provided to the generating session: this is a planning/code-check intervention, not a test of visual self-correction after rendering.
 
+The second round completed all four calls and executed every script unchanged. Each condition produced one neck-contact case and one strip-contact case lacking a receiving socket. This particular generic checking prompt therefore produced no seated receiving socket in either trial. The small result does not establish that general checking instructions cannot help.
+
+## Separate axis: receptacle geometry
+
+The geometric requirement of a socket is stronger than a dark mark with the expected outline: there must be empty volume that a prong can occupy. This axis was added after inspection of the visual reconstructions, rather than silently changing their original scoring criteria.
+
+An independent Blender checker computes exact Boolean intersections between the retained prongs and plastic strip bodies. It is calibrated on a solid block, a shallow recess and a correctly hollow receptacle, with known collision volumes of 84, 60 and zero per test prong. The two retained visual replicas that passed the attachment criterion both have prong/plastic collisions; roughly 73.1% and 68.8% of each prong's volume intersects plastic in their respective scenes. Source inspection confirms solid housings and positive surface marks rather than receiving cavities. These are our retained generated meshes, not the original author's unavailable print mesh.
+
+The original visual prompt permitted overlapping solids and excluded mechanical mating. The new check measures an additional property; it does not retroactively turn a previous attachment success into failure to follow that prompt.
+
+## Third round: explicit text-only receptacles
+
+Two fresh sessions construct the same fully specified block, two blind rectangular cavities and matching prongs without an image. Both scripts build actual cavities directly in closed mesh topology. Both execute unchanged and pass the independent collision, volume, bounds and object-count checks. This demonstrates available construction capability under a literal functional requirement, while leaving spontaneous retention of that property from a drawing unresolved.
+
+The intervention is deliberately strong: exact dimensions and negative volume are supplied. It is a capability control, not a matched causal estimate against the image task. Clear final placement alone does not establish a complete insertion path or manufacturing suitability.
+
+## Programme continuation
+
+The next comparison should hold the drawing and reconstruction task fixed while adding a functional-geometry requirement alone, without specifying the intended plug placement. Assess attachment and empty receiving volume separately. Register that prompt and its criteria before collection, retain every result and use independent mesh checks alongside visual assessment.
+
+Further priorities are to test whether rendered feedback catches errors that code-only checking misses, and to use unfamiliar assemblies with independently specified distinguishing features. The same model's approval of its own work must remain an observation to test, rather than ground truth. No additional cohorts are currently running; the local state records the completed rounds and the next design task.
+
 ## Retention and continuation
 
 Protocols are committed before collecting their responses. Historical protocols and raw answers are preserved, including assumptions later corrected in the current assessment. All attempts, failures, scripts, views and Blender scenes remain local and tracked by the existing Git repository. The integrity checker validates study-specific provenance, run completeness and retained-source hashes; normal Git commits retain the work.

@@ -1,0 +1,12 @@
+{
+  "purpose": "Derived inspection view with named occluding objects hidden; retained geometry and camera unchanged",
+  "scene": "results/20261114T181143378123Z-receptacle-construction/construct_receptacle-1/geometry/scene.blend",
+  "scene_sha256": "90d55d67a36a51295040b7011f33e9ed5d1ddb7b2f75ae3439b1372fdc7ab253",
+  "hidden_objects": [
+    "pin_left",
+    "pin_right"
+  ],
+  "geometry_changed": false,
+  "retained_scene_saved": false,
+  "script_sha256": "b89c00c6b4578e114ab2449c3d3d2c8ab0f5687e43e9bb4b6e6f9ab9dbd130f2"
+}

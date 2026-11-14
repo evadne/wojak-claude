@@ -135,6 +135,41 @@ def audit(root, allow_active=False):
     for commit in commits:
         found = subprocess.run(["git", "cat-file", "-e", commit + "^{commit}"], cwd=root, capture_output=True)
         require(found.returncode == 0, "Missing historical code commit: " + commit)
+    protocols = {hashlib.sha256(p.read_bytes()).hexdigest() for p in (root / "protocol").glob("*.json")}
+    history_hashes = {}
+
+    def historical_script_hashes(relative):
+        if relative not in history_hashes:
+            history = subprocess.run(["git", "log", "--format=%H", "--", relative], cwd=root, capture_output=True, text=True, check=True)
+            hashes = set()
+            for commit in history.stdout.splitlines():
+                content = subprocess.run(["git", "show", commit + ":" + relative], cwd=root, capture_output=True, check=True).stdout
+                hashes.add(hashlib.sha256(content).hexdigest())
+            history_hashes[relative] = hashes
+        return history_hashes[relative]
+
+    for report_path in (root / "results").glob("*audit.json"):
+        report = load(report_path)
+        if "calibration" not in report:
+            continue
+        require(report.get("protocol_sha256") in protocols, "Missing audit protocol: " + report_path.name)
+        require(report.get("script_sha256") in historical_script_hashes("scripts/audit_receptacles.py"), "Missing audit code version: " + report_path.name)
+        require(all(c.get("passed") for c in report["calibration"]), "Audit calibration failed: " + report_path.name)
+        for case in report["cases"]:
+            verify_hash(root / case["scene"], case["scene_sha256"])
+            require(case.get("source_geometry_changed") is False, "Audit modified retained geometry: " + case["id"])
+        counts["calibrated_audit_reports"] += 1
+    for metadata_path in (root / "results").glob("*/*/geometry/*.json"):
+        metadata = load(metadata_path)
+        if "hidden_objects" not in metadata:
+            continue
+        verify_hash(root / metadata["scene"], metadata["scene_sha256"])
+        require(metadata.get("script_sha256") in historical_script_hashes("scripts/render_inspection.py"), "Missing inspection code version: " + str(metadata_path))
+        require(metadata.get("geometry_changed") is False and metadata.get("retained_scene_saved") is False,
+                "Inspection changed retained scene: " + str(metadata_path))
+        image = metadata_path.with_suffix(".png")
+        require(image.is_file() and image.read_bytes().startswith(b"\x89PNG\r\n\x1a\n"), "Missing inspection view: " + str(image))
+        counts["derived_inspection_views"] += 1
     return {"valid": not errors, "counts": dict(counts), "pending": pending, "errors": errors}
 
 

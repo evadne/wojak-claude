@@ -1,6 +1,6 @@
 {
   "objective": "Understand selection and preservation of distinguishing visual features and attachment relationships during image-to-3D reconstruction.",
-  "current_phase": "functional_geometry_control_collecting",
+  "current_phase": "next_visual_function_control_design",
   "first_round": {
     "status": "complete",
     "attempts": 16,
@@ -26,9 +26,10 @@
     "Preserve distinguishing features and relationships; broad resemblance alone does not establish fidelity.",
     "The generator and critic may share omissions; model agreement is not independent validation.",
     "Treat infrastructure failures separately from quality; retain every attempt.",
-    "No claim about proprietary internal architecture or model-wide failure rate is supported."
+    "No claim about proprietary internal architecture or model-wide failure rate is supported.",
+    "Depicted attachment, physical clearance and fidelity to distinguishing features are separate axes; do not retroactively change prior scores or equate model judgement with independent validation."
   ],
-  "next_action": "Inspect and render the two text-only constructions; measure collision volume and requested dimensions using calibrated geometry checks. Preserve first/second-round scores and report functional topology as a separate axis.",
+  "next_action": "Design and commit a matched image-reconstruction comparison adding a functional-geometry requirement alone, without supplying the plug placement. Score attachment and receiving voids separately with retained renders and independent mesh checks. Do not repeat completed cohorts.",
   "resume_entry_points": [
     "README.md",
     "docs/study-design.md",
@@ -43,8 +44,18 @@
   },
   "third_round": {
     "protocol": "protocol/receptacle-generation.json",
-    "status": "collecting",
+    "status": "complete",
     "run_directory": "results/20261114T181143378123Z-receptacle-construction",
-    "planned_calls": 2
+    "planned_calls": 2,
+    "completed_calls": 2,
+    "audit": "results/receptacle-control-audit.json",
+    "cases_passing_clearance_and_dimensions": 2
+  },
+  "programme_status": "ongoing; all registered cohorts are complete and no model processes remain active",
+  "totals": {
+    "experimental_attempts": 22,
+    "completed_answers": 20,
+    "infrastructure_incomplete": 2,
+    "retained_scene_bundles": 10
   }
 }

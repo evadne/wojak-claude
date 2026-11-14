@@ -6,7 +6,7 @@ This is a study of one example. It does not reproduce the original benchmark's u
 
 The current research question and hypotheses are retained in [the study design](docs/study-design.md). [STUDY-STATE.json](STUDY-STATE.json) records the active phase and continuation point. All study material belongs in this existing Git repository; normal commits are the retention mechanism.
 
-**Finding:** the disputed attachment is reproducible in our open reconstruction prompts. Both completed open reconstructions put the plug in the neck/shoulder beside the strip. Both completed reconstructions given an explicit socket constraint seat the plug on the strip's front face. The model reports uncertainty about the reference attachment, but that does not establish that the drawing lacks sufficient clues. The intervention changes interpretation, attention and geometric constraints together.
+**Current findings:** explicit attachment instructions produced the depicted connection in two replicas, but those models still place prongs inside solid plastic. A general fidelity-check prompt did not produce a seated receiving socket in either of two new trials. Two text-only controls with explicit cavity dimensions do construct actual clear receptacles. These are distinct observations about visual relationships, volumetric geometry and available construction capability. Model-reported uncertainty does not establish insufficient grounding in the drawing.
 
 ## Inputs and provenance
 
@@ -82,11 +82,25 @@ Fidelity also requires selecting the right features. A caricature can preserve a
 
 The evidence supports studying visual cue use, fidelity choices and explicit relation enforcement. It does not isolate a vision encoder defect, establish an absence of spatial understanding, or show that the original benchmark harness used the same process. Because the explicit condition supplies an interpretation, makes the relation salient and specifies a constraint, its apparent benefit cannot distinguish their contributions. A stronger next study would independently establish the relevant visual cues and attachment relationships, then test their retention under changes in style, detail and viewpoint.
 
-There are nine main perception answers, four completed reconstruction answers, one separately retained image-ingestion pilot, and two retained process timeouts. [Accounting](results/accounting.json) distinguishes reported list-price equivalents from the unknown costs of aborted calls. The initial text availability checks are outside the experimental dataset.
+The first round contains nine main perception answers, four completed reconstruction answers, one separately retained image-ingestion pilot, and two retained process timeouts. [Accounting](results/accounting.json) now covers all rounds and distinguishes reported list-price equivalents from the unknown costs of aborted calls. The initial text availability checks are outside the experimental dataset.
 
 ## General fidelity control
 
-[The second-round protocol](protocol/fidelity-check.json) adds only a general requirement to identify distinguishing features, trace connections and check their preservation. It supplies no object-specific attachment answer. Two fresh baseline calls run alongside two fresh general-check calls, using the original baseline prompt unchanged and a seeded shuffled dispatch order. Both conditions use a 600-second deadline. Results are pending; the protocol and scoring rules were committed before collection.
+[The second-round protocol](protocol/fidelity-check.json) adds only a general requirement to identify distinguishing features, trace connections and check their preservation. It supplies no object-specific attachment answer. Two fresh baseline calls ran alongside two fresh general-check calls, using the original baseline prompt unchanged and a seeded shuffled dispatch order. Both conditions used a 600-second deadline; all four completed and executed without geometry repairs.
+
+Each condition produced one neck-contact case and one strip-contact case without a receiving socket. Neither general-check trial produced a seated receiving socket. [The full assessment](results/fidelity-check-assessment.json) preserves those distinctions and the evidence from both views. This is an observation about this wording and small cohort, not evidence that checking prompts cannot help.
+
+## Receptacle geometry and functional control
+
+The [independent mesh audit](results/receptacle-audit.json) measures the retained metal prongs intersecting the plastic strip body. All six prongs in the two earlier attachment-success replicas collide with solid plastic: about 73.1% of prong volume in one scene and 68.8% in the other. Source inspection shows positive surface marks over solid housings, not receiving voids. The checker passes known solid, shallow-recess and genuinely hollow calibration cases.
+
+The [text-only control](protocol/receptacle-generation.json) specifies a block, actual blind cavities and matching prongs without an image. Both responses construct real cavities directly in a closed manifold mesh. Both pass the [registered volume, bounds and collision checks](results/receptacle-control-audit.json), with zero prong/plastic overlap. [The assessment](results/receptacle-assessment.json) separates what this establishes from the original visual task.
+
+For inspection, compare the [solid geometry beneath a replica's plug](results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/under-plug.png) with the [actual openings in a text control](results/20261114T181143378123Z-receptacle-construction/construct_receptacle-1/geometry/open-receptacles.png). These derived views hide the named occluding parts only; their metadata records the visibility changes, and the retained scene files remain unchanged.
+
+The prior sculpture prompt allowed overlapping solids and did not require mechanical mating. This audit adds an independent functional criterion; it preserves the earlier attachment scores. It demonstrates available cavity-construction capability under an explicit specification, while leaving the failure to retain that property from an image to investigate. The original author's print mesh remains unavailable.
+
+There are now 22 retained experimental attempts: 20 completed answers and two earlier process timeouts, with ten executed scene bundles. The next planned comparison adds a functional-geometry requirement to the image reconstruction task without supplying the plug placement. No new cohort should be started without first checking the state and committing its protocol.
 
 ## Availability
 

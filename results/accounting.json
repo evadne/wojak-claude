@@ -1,8 +1,8 @@
 {
-  "experimental_attempts": 16,
-  "completed": 14,
+  "experimental_attempts": 22,
+  "completed": 20,
   "incomplete": 2,
-  "sum_of_reported_list_price_equivalents_usd": 5.465029,
+  "sum_of_reported_list_price_equivalents_usd": 10.882532,
   "attempts_with_unreported_cost": 2,
   "note": "Subscription usage accounting, not a claim of additional charges. Aborted-call costs are unknown. Text availability checks excluded. Image-ingestion pilot included and identified separately in its directory.",
   "attempts": [
@@ -85,6 +85,36 @@
       "path": "results/20261114T171224010444Z-explicit-timeout-replacement-1/reconstruct_explicit-1/result.json",
       "status": "completed",
       "reported_cost_usd": 1.6434376
+    },
+    {
+      "path": "results/20261114T175202269055Z-fidelity-check/reconstruct_fidelity_check-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 1.41312
+    },
+    {
+      "path": "results/20261114T175202269055Z-fidelity-check/reconstruct_fidelity_check-2/result.json",
+      "status": "completed",
+      "reported_cost_usd": 1.3366368
+    },
+    {
+      "path": "results/20261114T175202269055Z-fidelity-check/reconstruct_open-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.8571372
+    },
+    {
+      "path": "results/20261114T175202269055Z-fidelity-check/reconstruct_open-2/result.json",
+      "status": "completed",
+      "reported_cost_usd": 1.0719772
+    },
+    {
+      "path": "results/20261114T181143378123Z-receptacle-construction/construct_receptacle-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.382296
+    },
+    {
+      "path": "results/20261114T181143378123Z-receptacle-construction/construct_receptacle-2/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.356336
     }
   ]
 }

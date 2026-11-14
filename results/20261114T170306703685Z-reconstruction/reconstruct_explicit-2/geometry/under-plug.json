@@ -1,0 +1,17 @@
+{
+  "purpose": "Derived inspection view with named occluding objects hidden; retained geometry and camera unchanged",
+  "scene": "results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/scene.blend",
+  "scene_sha256": "d8b51bac23754c6cd19c5f50342f2b8b737ef2504375df26a32ad4b578787bca",
+  "hidden_objects": [
+    "PlugFlange",
+    "PlugBody",
+    "PlugRelief",
+    "ProngL",
+    "ProngR",
+    "ProngGround",
+    "Cable"
+  ],
+  "geometry_changed": false,
+  "retained_scene_saved": false,
+  "script_sha256": "b89c00c6b4578e114ab2449c3d3d2c8ab0f5687e43e9bb4b6e6f9ab9dbd130f2"
+}
