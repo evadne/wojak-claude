@@ -8,6 +8,7 @@ import hashlib
 import json
 import mimetypes
 from pathlib import Path
+import random
 import subprocess
 import time
 
@@ -16,6 +17,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def schedule_jobs(conditions, repeats, seed=None):
+    jobs = [(condition, repeat) for condition in conditions for repeat in range(1, repeats + 1)]
+    if seed is not None:
+        random.Random(seed).shuffle(jobs)
+    return jobs
 
 
 def final_result(stdout, returncode, expected_model):
@@ -76,20 +84,25 @@ def run_one(protocol, condition, repeat, run_dir):
     start = time.monotonic()
     print("Starting", ident, flush=True)
     try:
-        response = subprocess.run(
-            command, input=json.dumps(packet) + "\n", capture_output=True,
-            text=True, cwd=ROOT, timeout=protocol["timeout_seconds"],
-        )
-        (out / "stdout.jsonl").write_text(response.stdout)
-        (out / "stderr.txt").write_text(response.stderr)
-        result = final_result(response.stdout, response.returncode, protocol["model"])
-        result["exit_code"] = response.returncode
-    except subprocess.TimeoutExpired as exc:
-        for name, data in [("stdout.jsonl", exc.stdout), ("stderr.txt", exc.stderr)]:
-            if isinstance(data, bytes):
-                data = data.decode("utf-8", "replace")
-            (out / name).write_text(data or "")
-        result = {"status": "infrastructure_error", "reason": "CLI timeout"}
+        timed_out = False
+        # Write raw streams during inference so interruption does not erase evidence.
+        with (out / "stdout.jsonl").open("w") as stdout, (out / "stderr.txt").open("w") as stderr:
+            with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr,
+                                  text=True, cwd=ROOT) as process:
+                try:
+                    process.communicate(json.dumps(packet) + "\n", timeout=protocol["timeout_seconds"])
+                except subprocess.TimeoutExpired:
+                    timed_out = True
+                    process.kill()
+                    process.communicate()
+                exit_code = process.returncode
+        if timed_out:
+            result = {"status": "infrastructure_error", "reason": "CLI timeout"}
+        else:
+            result = final_result((out / "stdout.jsonl").read_text(), exit_code, protocol["model"])
+        result["exit_code"] = exit_code
+    except OSError as exc:
+        result = {"status": "infrastructure_error", "reason": str(exc)}
     result.update({"id": ident, "elapsed_seconds": round(time.monotonic() - start, 3)})
     (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     if result.get("answer") is not None:
@@ -120,7 +133,7 @@ def main():
         parser.error("Select at least one condition and one repetition")
     if args.condition and set(args.condition) - {c["id"] for c in conditions}:
         parser.error("Unknown condition")
-    jobs = [(c, n) for c in conditions for n in range(1, protocol["repeats"] + 1)]
+    jobs = schedule_jobs(conditions, protocol["repeats"], protocol.get("schedule_seed"))
     for condition, _ in jobs:
         for name in condition["images"]:
             if not (ROOT / "inputs" / name).is_file():
@@ -138,6 +151,7 @@ def main():
         "cli_version": subprocess.run(["claude", "--version"], capture_output=True, text=True, check=True).stdout.strip(),
         "git_commit": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip(),
         "selected_conditions": [c["id"] for c in conditions],
+        "dispatch_order": [c["id"] + "-" + str(n) for c, n in jobs],
     }
     (run_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
     results = []
@@ -148,6 +162,7 @@ def main():
     summary = {
         "calls": len(results), "completed": sum(r["status"] == "completed" for r in results),
         "cli_reported_cost_usd": round(sum(r.get("cli_result", {}).get("total_cost_usd", 0) for r in results), 6),
+        "calls_with_unreported_cost": sum("total_cost_usd" not in r.get("cli_result", {}) for r in results),
         "runs": [{"id": r["id"], "status": r["status"]} for r in sorted(results, key=lambda r: r["id"])],
     }
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")

@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 import unittest
+from collections import Counter
 
 spec = importlib.util.spec_from_file_location("probe", Path(__file__).resolve().parents[1] / "scripts/probe.py")
 probe = importlib.util.module_from_spec(spec)
@@ -33,6 +34,13 @@ class ResultIntegrity(unittest.TestCase):
         response = probe.final_result(self.result(), 0, "claude-fable-5-2")
         self.assertEqual(response["status"], "completed")
         self.assertEqual(response["parsed_answer"], {"observed": True})
+
+    def test_shuffling_preserves_each_planned_observation(self):
+        conditions = [{"id": "baseline"}, {"id": "fidelity"}]
+        jobs = probe.schedule_jobs(conditions, 2, seed=20261114)
+        expected = Counter((c["id"], n) for c in conditions for n in (1, 2))
+        self.assertEqual(Counter((c["id"], n) for c, n in jobs), expected)
+        self.assertEqual(jobs, probe.schedule_jobs(conditions, 2, seed=20261114))
 
 
 if __name__ == "__main__":

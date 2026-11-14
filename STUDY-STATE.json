@@ -1,0 +1,27 @@
+{
+  "objective": "Understand selection and preservation of distinguishing visual features and attachment relationships during image-to-3D reconstruction.",
+  "current_phase": "second_round_prepared",
+  "first_round": {
+    "status": "complete",
+    "attempts": 16,
+    "completed": 14,
+    "infrastructure_incomplete": 2,
+    "completed_reconstructions": 4,
+    "assessment_commit": "540f182"
+  },
+  "second_round": {
+    "protocol": "protocol/fidelity-check.json",
+    "status": "prepared",
+    "run_directory": null,
+    "planned_calls": 4
+  },
+  "interpretive_constraints": [
+    "Model-reported uncertainty does not establish ambiguity or insufficient grounding in the source.",
+    "Preserve distinguishing features and relationships; broad resemblance alone does not establish fidelity.",
+    "The generator and critic may share omissions; model agreement is not independent validation.",
+    "Treat infrastructure failures separately from quality; retain every attempt.",
+    "No claim about proprietary internal architecture or model-wide failure rate is supported."
+  ],
+  "next_action": "Commit the second-round protocol and runner, then collect the four-call cohort. Do not rerun completed calls based on their quality.",
+  "resume_entry_points": ["README.md", "docs/study-design.md", "STUDY-STATE.json"]
+}

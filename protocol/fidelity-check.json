@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "purpose": "Compare the original reconstruction prompt with a general fidelity and connection-check instruction that does not supply the target relation, in a fresh concurrent cohort.",
+  "model": "claude-fable-5-2",
+  "effort": "high",
+  "repeats": 2,
+  "concurrency": 2,
+  "max_budget_usd_per_call": 2.0,
+  "timeout_seconds": 600,
+  "system_prompt": "You are creating a Blender Python script from a reference image. Use only the image and instructions in this conversation. Return exactly one JSON object without Markdown fences, with keys script (the complete Python source as a string), description (a short string), and uncertainty (an array of strings).",
+  "conditions": [
+    {
+      "id": "reconstruct_open",
+      "images": [
+        "reference.png"
+      ],
+      "prompt": "Write a self-contained Blender 5.2 Python script that builds a 3D sculpture corresponding to the drawing. Match the visible parts, their arrangement and overall form. The geometry may be stylised. Use an overall height of approximately 100 Blender units. Z is up; the front of the sculpture faces negative Y. Create geometry only: no cameras, lights, rendering, file reads or writes, external assets, add-ons, shell commands or network access. You may import only bpy, math and mathutils. Clear the starting scene and build the sculpture. Overlapping solid meshes are acceptable for this visual study; watertightness will not be scored. Return the script, a short description, and uncertainties as the requested JSON object."
+    },
+    {
+      "id": "reconstruct_fidelity_check",
+      "images": [
+        "reference.png"
+      ],
+      "prompt": "Write a self-contained Blender 5.2 Python script that builds a 3D sculpture corresponding to the drawing. Match the visible parts, their arrangement and overall form. The geometry may be stylised. Use an overall height of approximately 100 Blender units. Z is up; the front of the sculpture faces negative Y. Create geometry only: no cameras, lights, rendering, file reads or writes, external assets, add-ons, shell commands or network access. You may import only bpy, math and mathutils. Clear the starting scene and build the sculpture. Overlapping solid meshes are acceptable for this visual study; watertightness will not be scored. Before writing the script, identify the distinct parts, the visual features that distinguish this particular subject, and how those parts connect. Preserve these distinguishing features and relationships in the geometry. Before finalising, check the script's placements against the reference, and flag any junction that you cannot resolve from the visual cues. Return the script, a short description, and uncertainties as the requested JSON object."
+    }
+  ],
+  "scoring_plan": {
+    "primary": "Manually classify the depicted receiving point as a socket on the strip, contact with the strip without a supported socket, head/neck contact, or disconnected/unclear. Use generated source and both fixed views, not the model narrative alone.",
+    "secondary": [
+      "Distinct plug body",
+      "Cable meets plug",
+      "Two empty sockets remain visible",
+      "Tear streams originate at eyes",
+      "Distinguishing features omitted or invented",
+      "Execution errors and any geometry corrections"
+    ],
+    "execution": "Review the generated script before executing it. Rendering and saving are performed by the experimenter's wrapper, not by the model. Retain errors and any compatibility corrections; never silently repair the scene.",
+    "assessor": "Codex manual review, not blinded to condition; model uncertainty is a response property, not an adjudication of the reference."
+  },
+  "limitations": [
+    "Two fresh sessions per condition on one image are exploratory, not a reliability estimate.",
+    "The general-check instruction changes attention, planning and prompt length together; it does not isolate verbosity.",
+    "The instruction does not supply the target object names or expected attachment, but deliberately directs attention to relationships.",
+    "The generator receives no tools or rendered feedback. This tests planning and code review rather than post-render visual correction.",
+    "The dispatch seed shuffles call order; model temperature and sampling seed are not controlled.",
+    "Manual assessment is not blinded. The original benchmark prompt and modelling workflow remain unknown.",
+    "Earlier model-reported uncertainty does not independently establish source ambiguity."
+  ],
+  "schedule_seed": 20261114,
+  "source_protocol_sha256": "1826fdec59d9e30b341fe86e5a1e36d2faca6939a6fb39e820cb3801562d2165",
+  "recovery_policy": {
+    "maximum_replacements_per_infrastructure_failure": 1,
+    "timeout_seconds": 600,
+    "rule": "One fresh replacement for an infrastructure-incomplete call; identical inputs, model, effort and deadline. Never replace a completed answer based on quality. Keep all attempts."
+  }
+}
