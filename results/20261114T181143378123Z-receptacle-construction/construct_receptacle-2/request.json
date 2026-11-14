@@ -1,0 +1,32 @@
+{
+  "condition": "construct_receptacle",
+  "repeat": 2,
+  "prompt": "Write a self-contained Blender 5.2 Python script for a rectangular receptacle block and two matching test prongs. Use the following exact model units; do not rescale. The block is centred at the origin and has dimensions X=32, Y=16, Z=24. Its front face is Y=-8. Two blind rectangular receptacles open on that front face, centred at X=-5 and X=5, Z=0. Each has clear internal width 2.4 along X, height 6.4 along Z, and depth 8 along +Y, ending at Y=0. Model these as actual empty cavities, not coloured marks or solid surface details. Create two rectangular prongs with dimensions X=2, Y=7, Z=6, at their fully inserted centres (-5,-4.5,0) and (5,-4.5,0). The prongs must occupy the empty cavities without intersecting the plastic block. Create exactly three final mesh objects named socket_body, pin_left, and pin_right. Apply any Boolean modifiers and remove construction cutters. Clear the starting scene. Create geometry only: no cameras, lights, rendering, file reads or writes, external assets, add-ons, shell commands or network access. You may import only bpy, math and mathutils. Return the script, a short description, and uncertainties as the requested JSON object.",
+  "system_prompt": "You are creating Blender Python geometry from specified requirements. Use only the requirements in this conversation. Return exactly one JSON object without Markdown fences, with keys script (the complete Python source as a string), description (a short string), and uncertainty (an array of strings).",
+  "images": [],
+  "command": [
+    "claude",
+    "--safe-mode",
+    "-p",
+    "--model",
+    "claude-fable-5-2",
+    "--effort",
+    "high",
+    "--tools",
+    "",
+    "--strict-mcp-config",
+    "--mcp-config",
+    "{\"mcpServers\":{}}",
+    "--no-session-persistence",
+    "--output-format",
+    "stream-json",
+    "--input-format",
+    "stream-json",
+    "--verbose",
+    "--max-budget-usd",
+    "2.0",
+    "--system-prompt",
+    "You are creating Blender Python geometry from specified requirements. Use only the requirements in this conversation. Return exactly one JSON object without Markdown fences, with keys script (the complete Python source as a string), description (a short string), and uncertainty (an array of strings)."
+  ],
+  "started_at": "2026-11-14T18:11:43.426868+00:00"
+}

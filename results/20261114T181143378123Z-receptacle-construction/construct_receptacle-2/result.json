@@ -1,0 +1,139 @@
+{
+  "status": "completed",
+  "answer": "{\"script\": \"import bpy\\n\\n# ---------------------------------------------------------------------------\\n# Parameters (exact model units, no rescaling)\\n# ---------------------------------------------------------------------------\\nBLOCK_X, BLOCK_Y, BLOCK_Z = 32.0, 16.0, 24.0\\nCAV_W, CAV_H, CAV_D = 2.4, 6.4, 8.0\\nCAV_CENTRES_X = (-5.0, 5.0)\\nCAV_CENTRE_Z = 0.0\\nPIN_X, PIN_Y, PIN_Z = 2.0, 7.0, 6.0\\nPIN_CENTRES = {\\n    'pin_left': (-5.0, -4.5, 0.0),\\n    'pin_right': (5.0, -4.5, 0.0),\\n}\\n\\n\\ndef clear_scene():\\n    for obj in list(bpy.data.objects):\\n        bpy.data.objects.remove(obj, do_unlink=True)\\n    for coll in list(bpy.data.collections):\\n        bpy.data.collections.remove(coll)\\n    for blocks in (bpy.data.meshes, bpy.data.curves, bpy.data.cameras,\\n                   bpy.data.lights, bpy.data.materials):\\n        for block in list(blocks):\\n            blocks.remove(block)\\n\\n\\ndef check_closed(mesh):\\n    # Every edge must be shared by exactly two faces (closed manifold shell).\\n    counts = {}\\n    for poly in mesh.polygons:\\n        for key in poly.edge_keys:\\n            counts[key] = counts.get(key, 0) + 1\\n    bad = [k for k, c in counts.items() if c != 2]\\n    if bad:\\n        raise RuntimeError('Mesh %s is not a closed manifold (%d bad edges)' % (mesh.name, len(bad)))\\n\\n\\ndef make_mesh_object(name, verts, faces, location=(0.0, 0.0, 0.0)):\\n    mesh = bpy.data.meshes.new(name)\\n    mesh.from_pydata(verts, [], faces)\\n    mesh.validate()\\n    mesh.update()\\n    check_closed(mesh)\\n    obj = bpy.data.objects.new(name, mesh)\\n    obj.location = location\\n    bpy.context.scene.collection.objects.link(obj)\\n    return obj\\n\\n\\ndef box_geometry(sx, sy, sz):\\n    hx, hy, hz = sx / 2.0, sy / 2.0, sz / 2.0\\n    verts = [\\n        (-hx, -hy, -hz), (hx, -hy, -hz), (hx, hy, -hz), (-hx, hy, -hz),\\n        (-hx, -hy, hz), (hx, -hy, hz), (hx, hy, hz), (-hx, hy, hz),\\n    ]\\n    faces = [\\n        (0, 3, 2, 1),  # bottom (-Z)\\n        (4, 5, 6, 7),  # top (+Z)\\n        (0, 1, 5, 4),  # front (-Y)\\n        (1, 2, 6, 5),  # right (+X)\\n        (2, 3, 7, 6),  # back (+Y)\\n        (3, 0, 4, 7),  # left (-X)\\n    ]\\n    return verts, faces\\n\\n\\ndef socket_geometry():\\n    # Block built directly as one closed shell with two real blind cavities.\\n    hx, hy, hz = BLOCK_X / 2.0, BLOCK_Y / 2.0, BLOCK_Z / 2.0\\n    y_front = -hy\\n    y_back = hy\\n    y_cav = y_front + CAV_D  # cavity floor, Y = 0\\n\\n    xs = [-hx]\\n    for cx in sorted(CAV_CENTRES_X):\\n        xs.append(cx - CAV_W / 2.0)\\n        xs.append(cx + CAV_W / 2.0)\\n    xs.append(hx)\\n    zs = [-hz, CAV_CENTRE_Z - CAV_H / 2.0, CAV_CENTRE_Z + CAV_H / 2.0, hz]\\n\\n    nx = len(xs)  # 6\\n    nz = len(zs)  # 4\\n\\n    verts = []\\n    for z in zs:\\n        for x in xs:\\n            verts.append((x, y_front, z))\\n    for z in zs:\\n        for x in xs:\\n            verts.append((x, y_back, z))\\n\\n    def fv(i, j):\\n        return i + nx * j\\n\\n    def bv(i, j):\\n        return nx * nz + i + nx * j\\n\\n    holes = [(1, 1), (3, 1)]  # (column, row) cells left open on the front face\\n    faces = []\\n\\n    # Front face (-Y) with the two openings omitted\\n    for j in range(nz - 1):\\n        for i in range(nx - 1):\\n            if (i, j) in holes:\\n                continue\\n            faces.append((fv(i, j), fv(i + 1, j), fv(i + 1, j + 1), fv(i, j + 1)))\\n\\n    # Back face (+Y)\\n    for j in range(nz - 1):\\n        for i in range(nx - 1):\\n            faces.append((bv(i, j), bv(i, j + 1), bv(i + 1, j + 1), bv(i + 1, j)))\\n\\n    # Top (+Z) and bottom (-Z)\\n    jt = nz - 1\\n    for i in range(nx - 1):\\n        faces.append((fv(i, jt), fv(i + 1, jt), bv(i + 1, jt), bv(i, jt)))\\n        faces.append((fv(i, 0), bv(i, 0), bv(i + 1, 0), fv(i + 1, 0)))\\n\\n    # Left (-X) and right (+X)\\n    ir = nx - 1\\n    for j in range(nz - 1):\\n        faces.append((fv(0, j), fv(0, j + 1), bv(0, j + 1), bv(0, j)))\\n        faces.append((fv(ir, j), bv(ir, j), bv(ir, j + 1), fv(ir, j + 1)))\\n\\n    # Cavities: four walls plus an end cap at Y = 0, normals facing into the void\\n    for (c, r) in holes:\\n        a = fv(c, r)\\n        b = fv(c + 1, r)\\n        cc = fv(c + 1, r + 1)\\n        d = fv(c, r + 1)\\n        base = len(verts)\\n        verts.append((xs[c], y_cav, zs[r]))\\n        verts.append((xs[c + 1], y_cav, zs[r]))\\n        verts.append((xs[c + 1], y_cav, zs[r + 1]))\\n        verts.append((xs[c], y_cav, zs[r + 1]))\\n        a2, b2, c2, d2 = base, base + 1, base + 2, base + 3\\n        faces.append((a, b, b2, a2))      # cavity lower wall\\n        faces.append((b, cc, c2, b2))     # cavity +X wall\\n        faces.append((cc, d, d2, c2))     # cavity upper wall\\n        faces.append((d, a, a2, d2))      # cavity -X wall\\n        faces.append((a2, b2, c2, d2))    # blind end at Y = 0\\n\\n    return verts, faces\\n\\n\\ndef main():\\n    clear_scene()\\n\\n    s_verts, s_faces = socket_geometry()\\n    make_mesh_object('socket_body', s_verts, s_faces, (0.0, 0.0, 0.0))\\n\\n    p_verts, p_faces = box_geometry(PIN_X, PIN_Y, PIN_Z)\\n    for name in ('pin_left', 'pin_right'):\\n        make_mesh_object(name, p_verts, p_faces, PIN_CENTRES[name])\\n\\n    names = sorted(o.name for o in bpy.data.objects if o.type == 'MESH')\\n    if names != ['pin_left', 'pin_right', 'socket_body'] or len(bpy.data.objects) != 3:\\n        raise RuntimeError('Unexpected final objects: %s' % names)\\n\\n    bpy.context.view_layer.update()\\n\\n\\nmain()\\n\", \"description\": \"Clears the scene and builds three mesh objects: socket_body, a 32x16x24 block centred at the origin with two real blind cavities (2.4 x 6.4, 8 deep, opening at Y=-8 and ending at Y=0, centred at X=-5 and X=5, Z=0), plus pin_left and pin_right, 2x7x6 prongs at (-5,-4.5,0) and (5,-4.5,0). The block is built directly as a single closed shell with the cavities in its topology, so no Boolean modifiers or cutter objects are ever created. Each prong has 0.2 clearance per side in X and Z, sits flush with the front face at Y=-8, and stops 1 unit short of the cavity floor.\", \"uncertainty\": [\"The script has not been run in Blender 5.2; it uses only long-standing bpy data calls (meshes.new, from_pydata, objects.new, collection link), which I expect to be unchanged.\", \"The cavities are modelled directly rather than cut with Boolean modifiers, on the reading that Booleans were optional ('apply any Boolean modifiers').\", \"The block's outer faces are split into coplanar quads so the shell stays watertight around the openings; the shape is exact, but the faces are not single quads.\", \"Clearing the scene deletes all existing objects, collections, meshes, curves, cameras, lights and materials; other data-block types such as worlds and images are left alone.\", \"Each prong's object origin is at its stated centre and the block's is at the world origin; no materials are assigned.\", \"Coordinates such as 3.8 and 6.2 are stored as 32-bit floats, so the cavity dimensions are exact only to about 1e-6 units.\"]}",
+  "parsed_answer": {
+    "script": "import bpy\n\n# ---------------------------------------------------------------------------\n# Parameters (exact model units, no rescaling)\n# ---------------------------------------------------------------------------\nBLOCK_X, BLOCK_Y, BLOCK_Z = 32.0, 16.0, 24.0\nCAV_W, CAV_H, CAV_D = 2.4, 6.4, 8.0\nCAV_CENTRES_X = (-5.0, 5.0)\nCAV_CENTRE_Z = 0.0\nPIN_X, PIN_Y, PIN_Z = 2.0, 7.0, 6.0\nPIN_CENTRES = {\n    'pin_left': (-5.0, -4.5, 0.0),\n    'pin_right': (5.0, -4.5, 0.0),\n}\n\n\ndef clear_scene():\n    for obj in list(bpy.data.objects):\n        bpy.data.objects.remove(obj, do_unlink=True)\n    for coll in list(bpy.data.collections):\n        bpy.data.collections.remove(coll)\n    for blocks in (bpy.data.meshes, bpy.data.curves, bpy.data.cameras,\n                   bpy.data.lights, bpy.data.materials):\n        for block in list(blocks):\n            blocks.remove(block)\n\n\ndef check_closed(mesh):\n    # Every edge must be shared by exactly two faces (closed manifold shell).\n    counts = {}\n    for poly in mesh.polygons:\n        for key in poly.edge_keys:\n            counts[key] = counts.get(key, 0) + 1\n    bad = [k for k, c in counts.items() if c != 2]\n    if bad:\n        raise RuntimeError('Mesh %s is not a closed manifold (%d bad edges)' % (mesh.name, len(bad)))\n\n\ndef make_mesh_object(name, verts, faces, location=(0.0, 0.0, 0.0)):\n    mesh = bpy.data.meshes.new(name)\n    mesh.from_pydata(verts, [], faces)\n    mesh.validate()\n    mesh.update()\n    check_closed(mesh)\n    obj = bpy.data.objects.new(name, mesh)\n    obj.location = location\n    bpy.context.scene.collection.objects.link(obj)\n    return obj\n\n\ndef box_geometry(sx, sy, sz):\n    hx, hy, hz = sx / 2.0, sy / 2.0, sz / 2.0\n    verts = [\n        (-hx, -hy, -hz), (hx, -hy, -hz), (hx, hy, -hz), (-hx, hy, -hz),\n        (-hx, -hy, hz), (hx, -hy, hz), (hx, hy, hz), (-hx, hy, hz),\n    ]\n    faces = [\n        (0, 3, 2, 1),  # bottom (-Z)\n        (4, 5, 6, 7),  # top (+Z)\n        (0, 1, 5, 4),  # front (-Y)\n        (1, 2, 6, 5),  # right (+X)\n        (2, 3, 7, 6),  # back (+Y)\n        (3, 0, 4, 7),  # left (-X)\n    ]\n    return verts, faces\n\n\ndef socket_geometry():\n    # Block built directly as one closed shell with two real blind cavities.\n    hx, hy, hz = BLOCK_X / 2.0, BLOCK_Y / 2.0, BLOCK_Z / 2.0\n    y_front = -hy\n    y_back = hy\n    y_cav = y_front + CAV_D  # cavity floor, Y = 0\n\n    xs = [-hx]\n    for cx in sorted(CAV_CENTRES_X):\n        xs.append(cx - CAV_W / 2.0)\n        xs.append(cx + CAV_W / 2.0)\n    xs.append(hx)\n    zs = [-hz, CAV_CENTRE_Z - CAV_H / 2.0, CAV_CENTRE_Z + CAV_H / 2.0, hz]\n\n    nx = len(xs)  # 6\n    nz = len(zs)  # 4\n\n    verts = []\n    for z in zs:\n        for x in xs:\n            verts.append((x, y_front, z))\n    for z in zs:\n        for x in xs:\n            verts.append((x, y_back, z))\n\n    def fv(i, j):\n        return i + nx * j\n\n    def bv(i, j):\n        return nx * nz + i + nx * j\n\n    holes = [(1, 1), (3, 1)]  # (column, row) cells left open on the front face\n    faces = []\n\n    # Front face (-Y) with the two openings omitted\n    for j in range(nz - 1):\n        for i in range(nx - 1):\n            if (i, j) in holes:\n                continue\n            faces.append((fv(i, j), fv(i + 1, j), fv(i + 1, j + 1), fv(i, j + 1)))\n\n    # Back face (+Y)\n    for j in range(nz - 1):\n        for i in range(nx - 1):\n            faces.append((bv(i, j), bv(i, j + 1), bv(i + 1, j + 1), bv(i + 1, j)))\n\n    # Top (+Z) and bottom (-Z)\n    jt = nz - 1\n    for i in range(nx - 1):\n        faces.append((fv(i, jt), fv(i + 1, jt), bv(i + 1, jt), bv(i, jt)))\n        faces.append((fv(i, 0), bv(i, 0), bv(i + 1, 0), fv(i + 1, 0)))\n\n    # Left (-X) and right (+X)\n    ir = nx - 1\n    for j in range(nz - 1):\n        faces.append((fv(0, j), fv(0, j + 1), bv(0, j + 1), bv(0, j)))\n        faces.append((fv(ir, j), bv(ir, j), bv(ir, j + 1), fv(ir, j + 1)))\n\n    # Cavities: four walls plus an end cap at Y = 0, normals facing into the void\n    for (c, r) in holes:\n        a = fv(c, r)\n        b = fv(c + 1, r)\n        cc = fv(c + 1, r + 1)\n        d = fv(c, r + 1)\n        base = len(verts)\n        verts.append((xs[c], y_cav, zs[r]))\n        verts.append((xs[c + 1], y_cav, zs[r]))\n        verts.append((xs[c + 1], y_cav, zs[r + 1]))\n        verts.append((xs[c], y_cav, zs[r + 1]))\n        a2, b2, c2, d2 = base, base + 1, base + 2, base + 3\n        faces.append((a, b, b2, a2))      # cavity lower wall\n        faces.append((b, cc, c2, b2))     # cavity +X wall\n        faces.append((cc, d, d2, c2))     # cavity upper wall\n        faces.append((d, a, a2, d2))      # cavity -X wall\n        faces.append((a2, b2, c2, d2))    # blind end at Y = 0\n\n    return verts, faces\n\n\ndef main():\n    clear_scene()\n\n    s_verts, s_faces = socket_geometry()\n    make_mesh_object('socket_body', s_verts, s_faces, (0.0, 0.0, 0.0))\n\n    p_verts, p_faces = box_geometry(PIN_X, PIN_Y, PIN_Z)\n    for name in ('pin_left', 'pin_right'):\n        make_mesh_object(name, p_verts, p_faces, PIN_CENTRES[name])\n\n    names = sorted(o.name for o in bpy.data.objects if o.type == 'MESH')\n    if names != ['pin_left', 'pin_right', 'socket_body'] or len(bpy.data.objects) != 3:\n        raise RuntimeError('Unexpected final objects: %s' % names)\n\n    bpy.context.view_layer.update()\n\n\nmain()\n",
+    "description": "Clears the scene and builds three mesh objects: socket_body, a 32x16x24 block centred at the origin with two real blind cavities (2.4 x 6.4, 8 deep, opening at Y=-8 and ending at Y=0, centred at X=-5 and X=5, Z=0), plus pin_left and pin_right, 2x7x6 prongs at (-5,-4.5,0) and (5,-4.5,0). The block is built directly as a single closed shell with the cavities in its topology, so no Boolean modifiers or cutter objects are ever created. Each prong has 0.2 clearance per side in X and Z, sits flush with the front face at Y=-8, and stops 1 unit short of the cavity floor.",
+    "uncertainty": [
+      "The script has not been run in Blender 5.2; it uses only long-standing bpy data calls (meshes.new, from_pydata, objects.new, collection link), which I expect to be unchanged.",
+      "The cavities are modelled directly rather than cut with Boolean modifiers, on the reading that Booleans were optional ('apply any Boolean modifiers').",
+      "The block's outer faces are split into coplanar quads so the shell stays watertight around the openings; the shape is exact, but the faces are not single quads.",
+      "Clearing the scene deletes all existing objects, collections, meshes, curves, cameras, lights and materials; other data-block types such as worlds and images are left alone.",
+      "Each prong's object origin is at its stated centre and the block's is at the world origin; no materials are assigned.",
+      "Coordinates such as 3.8 and 6.2 are stored as 32-bit floats, so the cavity dimensions are exact only to about 1e-6 units."
+    ]
+  },
+  "cli_result": {
+    "duration_api_ms": 72976,
+    "stop_reason": "end_turn",
+    "session_id": "9330d5b4-122f-447d-b298-6f964ebc6acf",
+    "total_cost_usd": 0.356336,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 1045,
+      "cache_read_input_tokens": 0,
+      "output_tokens": 8490,
+      "output_tokens_details": {
+        "thinking_tokens": 5066
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 1045,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 8490,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 1045,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1045
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-fable-5-2": {
+        "inputTokens": 2,
+        "outputTokens": 8490,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 1045,
+        "webSearchRequests": 0,
+        "costUSD": 0.356336,
+        "contextWindow": 200000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 5066,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 1045,
+        "canonicalModel": "claude-fable-5-2",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "{\"script\": \"import bpy\\n\\n# ---------------------------------------------------------------------------\\n# Parameters (exact model units, no rescaling)\\n# ---------------------------------------------------------------------------\\nBLOCK_X, BLOCK_Y, BLOCK_Z = 32.0, 16.0, 24.0\\nCAV_W, CAV_H, CAV_D = 2.4, 6.4, 8.0\\nCAV_CENTRES_X = (-5.0, 5.0)\\nCAV_CENTRE_Z = 0.0\\nPIN_X, PIN_Y, PIN_Z = 2.0, 7.0, 6.0\\nPIN_CENTRES = {\\n    'pin_left': (-5.0, -4.5, 0.0),\\n    'pin_right': (5.0, -4.5, 0.0),\\n}\\n\\n\\ndef clear_scene():\\n    for obj in list(bpy.data.objects):\\n        bpy.data.objects.remove(obj, do_unlink=True)\\n    for coll in list(bpy.data.collections):\\n        bpy.data.collections.remove(coll)\\n    for blocks in (bpy.data.meshes, bpy.data.curves, bpy.data.cameras,\\n                   bpy.data.lights, bpy.data.materials):\\n        for block in list(blocks):\\n            blocks.remove(block)\\n\\n\\ndef check_closed(mesh):\\n    # Every edge must be shared by exactly two faces (closed manifold shell).\\n    counts = {}\\n    for poly in mesh.polygons:\\n        for key in poly.edge_keys:\\n            counts[key] = counts.get(key, 0) + 1\\n    bad = [k for k, c in counts.items() if c != 2]\\n    if bad:\\n        raise RuntimeError('Mesh %s is not a closed manifold (%d bad edges)' % (mesh.name, len(bad)))\\n\\n\\ndef make_mesh_object(name, verts, faces, location=(0.0, 0.0, 0.0)):\\n    mesh = bpy.data.meshes.new(name)\\n    mesh.from_pydata(verts, [], faces)\\n    mesh.validate()\\n    mesh.update()\\n    check_closed(mesh)\\n    obj = bpy.data.objects.new(name, mesh)\\n    obj.location = location\\n    bpy.context.scene.collection.objects.link(obj)\\n    return obj\\n\\n\\ndef box_geometry(sx, sy, sz):\\n    hx, hy, hz = sx / 2.0, sy / 2.0, sz / 2.0\\n    verts = [\\n        (-hx, -hy, -hz), (hx, -hy, -hz), (hx, hy, -hz), (-hx, hy, -hz),\\n        (-hx, -hy, hz), (hx, -hy, hz), (hx, hy, hz), (-hx, hy, hz),\\n    ]\\n    faces = [\\n        (0, 3, 2, 1),  # bottom (-Z)\\n        (4, 5, 6, 7),  # top (+Z)\\n        (0, 1, 5, 4),  # front (-Y)\\n        (1, 2, 6, 5),  # right (+X)\\n        (2, 3, 7, 6),  # back (+Y)\\n        (3, 0, 4, 7),  # left (-X)\\n    ]\\n    return verts, faces\\n\\n\\ndef socket_geometry():\\n    # Block built directly as one closed shell with two real blind cavities.\\n    hx, hy, hz = BLOCK_X / 2.0, BLOCK_Y / 2.0, BLOCK_Z / 2.0\\n    y_front = -hy\\n    y_back = hy\\n    y_cav = y_front + CAV_D  # cavity floor, Y = 0\\n\\n    xs = [-hx]\\n    for cx in sorted(CAV_CENTRES_X):\\n        xs.append(cx - CAV_W / 2.0)\\n        xs.append(cx + CAV_W / 2.0)\\n    xs.append(hx)\\n    zs = [-hz, CAV_CENTRE_Z - CAV_H / 2.0, CAV_CENTRE_Z + CAV_H / 2.0, hz]\\n\\n    nx = len(xs)  # 6\\n    nz = len(zs)  # 4\\n\\n    verts = []\\n    for z in zs:\\n        for x in xs:\\n            verts.append((x, y_front, z))\\n    for z in zs:\\n        for x in xs:\\n            verts.append((x, y_back, z))\\n\\n    def fv(i, j):\\n        return i + nx * j\\n\\n    def bv(i, j):\\n        return nx * nz + i + nx * j\\n\\n    holes = [(1, 1), (3, 1)]  # (column, row) cells left open on the front face\\n    faces = []\\n\\n    # Front face (-Y) with the two openings omitted\\n    for j in range(nz - 1):\\n        for i in range(nx - 1):\\n            if (i, j) in holes:\\n                continue\\n            faces.append((fv(i, j), fv(i + 1, j), fv(i + 1, j + 1), fv(i, j + 1)))\\n\\n    # Back face (+Y)\\n    for j in range(nz - 1):\\n        for i in range(nx - 1):\\n            faces.append((bv(i, j), bv(i, j + 1), bv(i + 1, j + 1), bv(i + 1, j)))\\n\\n    # Top (+Z) and bottom (-Z)\\n    jt = nz - 1\\n    for i in range(nx - 1):\\n        faces.append((fv(i, jt), fv(i + 1, jt), bv(i + 1, jt), bv(i, jt)))\\n        faces.append((fv(i, 0), bv(i, 0), bv(i + 1, 0), fv(i + 1, 0)))\\n\\n    # Left (-X) and right (+X)\\n    ir = nx - 1\\n    for j in range(nz - 1):\\n        faces.append((fv(0, j), fv(0, j + 1), bv(0, j + 1), bv(0, j)))\\n        faces.append((fv(ir, j), bv(ir, j), bv(ir, j + 1), fv(ir, j + 1)))\\n\\n    # Cavities: four walls plus an end cap at Y = 0, normals facing into the void\\n    for (c, r) in holes:\\n        a = fv(c, r)\\n        b = fv(c + 1, r)\\n        cc = fv(c + 1, r + 1)\\n        d = fv(c, r + 1)\\n        base = len(verts)\\n        verts.append((xs[c], y_cav, zs[r]))\\n        verts.append((xs[c + 1], y_cav, zs[r]))\\n        verts.append((xs[c + 1], y_cav, zs[r + 1]))\\n        verts.append((xs[c], y_cav, zs[r + 1]))\\n        a2, b2, c2, d2 = base, base + 1, base + 2, base + 3\\n        faces.append((a, b, b2, a2))      # cavity lower wall\\n        faces.append((b, cc, c2, b2))     # cavity +X wall\\n        faces.append((cc, d, d2, c2))     # cavity upper wall\\n        faces.append((d, a, a2, d2))      # cavity -X wall\\n        faces.append((a2, b2, c2, d2))    # blind end at Y = 0\\n\\n    return verts, faces\\n\\n\\ndef main():\\n    clear_scene()\\n\\n    s_verts, s_faces = socket_geometry()\\n    make_mesh_object('socket_body', s_verts, s_faces, (0.0, 0.0, 0.0))\\n\\n    p_verts, p_faces = box_geometry(PIN_X, PIN_Y, PIN_Z)\\n    for name in ('pin_left', 'pin_right'):\\n        make_mesh_object(name, p_verts, p_faces, PIN_CENTRES[name])\\n\\n    names = sorted(o.name for o in bpy.data.objects if o.type == 'MESH')\\n    if names != ['pin_left', 'pin_right', 'socket_body'] or len(bpy.data.objects) != 3:\\n        raise RuntimeError('Unexpected final objects: %s' % names)\\n\\n    bpy.context.view_layer.update()\\n\\n\\nmain()\\n\", \"description\": \"Clears the scene and builds three mesh objects: socket_body, a 32x16x24 block centred at the origin with two real blind cavities (2.4 x 6.4, 8 deep, opening at Y=-8 and ending at Y=0, centred at X=-5 and X=5, Z=0), plus pin_left and pin_right, 2x7x6 prongs at (-5,-4.5,0) and (5,-4.5,0). The block is built directly as a single closed shell with the cavities in its topology, so no Boolean modifiers or cutter objects are ever created. Each prong has 0.2 clearance per side in X and Z, sits flush with the front face at Y=-8, and stops 1 unit short of the cavity floor.\", \"uncertainty\": [\"The script has not been run in Blender 5.2; it uses only long-standing bpy data calls (meshes.new, from_pydata, objects.new, collection link), which I expect to be unchanged.\", \"The cavities are modelled directly rather than cut with Boolean modifiers, on the reading that Booleans were optional ('apply any Boolean modifiers').\", \"The block's outer faces are split into coplanar quads so the shell stays watertight around the openings; the shape is exact, but the faces are not single quads.\", \"Clearing the scene deletes all existing objects, collections, meshes, curves, cameras, lights and materials; other data-block types such as worlds and images are left alone.\", \"Each prong's object origin is at its stated centre and the block's is at the world origin; no materials are assigned.\", \"Coordinates such as 3.8 and 6.2 are stored as 32-bit floats, so the cavity dimensions are exact only to about 1e-6 units.\"]}",
+    "ttft_ms": 48056,
+    "type": "result",
+    "duration_ms": 73014,
+    "uuid": "d4a973de-1778-4484-b74b-712e699ae680",
+    "ttft_stream_ms": 1913,
+    "time_to_request_ms": 36,
+    "first_content_frame_ms": 1913,
+    "queued_turn_count": 0,
+    "result_index": 0,
+    "model_usage_since_last_result": {
+      "claude-fable-5-2": {
+        "inputTokens": 2,
+        "outputTokens": 8490,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 1045,
+        "webSearchRequests": 0,
+        "costUSD": 0.356336,
+        "contextWindow": 200000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 5066,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 1045,
+        "canonicalModel": "claude-fable-5-2",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "credential_expires_at": "2026-12-14T11:28:49.458Z"
+  },
+  "exit_code": 0,
+  "id": "construct_receptacle-2",
+  "elapsed_seconds": 73.801
+}

@@ -1,0 +1,140 @@
+{
+  "status": "completed",
+  "answer": "{\"script\": \"import bpy\\nfrom mathutils import Vector\\n\\n# All values are exact model units; nothing is rescaled.\\nBLOCK_X, BLOCK_Y, BLOCK_Z = 32.0, 16.0, 24.0\\nCAV_CENTRES_X = (-5.0, 5.0)\\nCAV_CENTRE_Z = 0.0\\nCAV_W, CAV_H, CAV_DEPTH = 2.4, 6.4, 8.0\\nPIN_X, PIN_Y, PIN_Z = 2.0, 7.0, 6.0\\nPIN_CENTRES = (\\n    ('pin_left', (-5.0, -4.5, 0.0)),\\n    ('pin_right', (5.0, -4.5, 0.0)),\\n)\\n\\n\\ndef clear_scene():\\n    try:\\n        if bpy.context.mode != 'OBJECT':\\n            bpy.ops.object.mode_set(mode='OBJECT')\\n    except Exception:\\n        pass\\n    for obj in list(bpy.data.objects):\\n        bpy.data.objects.remove(obj, do_unlink=True)\\n    for coll in list(bpy.data.collections):\\n        bpy.data.collections.remove(coll)\\n    for store in (bpy.data.meshes, bpy.data.curves, bpy.data.lights,\\n                  bpy.data.cameras, bpy.data.materials):\\n        for block in list(store):\\n            if block.users == 0:\\n                store.remove(block)\\n\\n\\ndef add_quad(verts, faces, idx, want):\\n    # Append a quad, flipping its winding if needed so the normal follows 'want'.\\n    idx = list(idx)\\n    a = Vector(verts[idx[0]])\\n    b = Vector(verts[idx[1]])\\n    c = Vector(verts[idx[2]])\\n    n = (b - a).cross(c - b)\\n    if n.dot(Vector(want)) < 0.0:\\n        idx.reverse()\\n    faces.append(tuple(idx))\\n\\n\\ndef build_socket_mesh(name):\\n    # Block with two blind cavities built directly as one closed manifold mesh.\\n    # The front and back faces share an X/Z grid so that no T-junctions occur.\\n    hx, hy, hz = BLOCK_X / 2.0, BLOCK_Y / 2.0, BLOCK_Z / 2.0\\n    y_front = -hy\\n    y_back = hy\\n    y_end = y_front + CAV_DEPTH\\n\\n    xs = [-hx]\\n    for cx in sorted(CAV_CENTRES_X):\\n        xs.append(cx - CAV_W / 2.0)\\n        xs.append(cx + CAV_W / 2.0)\\n    xs.append(hx)\\n    zs = [-hz, CAV_CENTRE_Z - CAV_H / 2.0, CAV_CENTRE_Z + CAV_H / 2.0, hz]\\n    nx, nz = len(xs), len(zs)\\n    holes = set((1 + 2 * k, 1) for k in range(len(CAV_CENTRES_X)))\\n\\n    verts = []\\n    for y in (y_front, y_back):\\n        for j in range(nz):\\n            for i in range(nx):\\n                verts.append((xs[i], y, zs[j]))\\n\\n    def f(i, j):\\n        return j * nx + i\\n\\n    def b(i, j):\\n        return nx * nz + j * nx + i\\n\\n    faces = []\\n\\n    # Front face (Y = -8) with the two receptacle openings left open,\\n    # and the back face (Y = +8) fully closed.\\n    for j in range(nz - 1):\\n        for i in range(nx - 1):\\n            if (i, j) not in holes:\\n                add_quad(verts, faces,\\n                         [f(i, j), f(i + 1, j), f(i + 1, j + 1), f(i, j + 1)],\\n                         (0.0, -1.0, 0.0))\\n            add_quad(verts, faces,\\n                     [b(i, j), b(i + 1, j), b(i + 1, j + 1), b(i, j + 1)],\\n                     (0.0, 1.0, 0.0))\\n\\n    # Bottom and top faces.\\n    for i in range(nx - 1):\\n        add_quad(verts, faces,\\n                 [f(i, 0), f(i + 1, 0), b(i + 1, 0), b(i, 0)],\\n                 (0.0, 0.0, -1.0))\\n        add_quad(verts, faces,\\n                 [f(i, nz - 1), f(i + 1, nz - 1), b(i + 1, nz - 1), b(i, nz - 1)],\\n                 (0.0, 0.0, 1.0))\\n\\n    # Left and right faces.\\n    for j in range(nz - 1):\\n        add_quad(verts, faces,\\n                 [f(0, j), f(0, j + 1), b(0, j + 1), b(0, j)],\\n                 (-1.0, 0.0, 0.0))\\n        add_quad(verts, faces,\\n                 [f(nx - 1, j), f(nx - 1, j + 1), b(nx - 1, j + 1), b(nx - 1, j)],\\n                 (1.0, 0.0, 0.0))\\n\\n    # Blind cavities: four walls and an end cap at Y = 0, normals facing the void.\\n    for (i, j) in sorted(holes):\\n        ring = [f(i, j), f(i + 1, j), f(i + 1, j + 1), f(i, j + 1)]\\n        base = len(verts)\\n        for r in ring:\\n            verts.append((verts[r][0], y_end, verts[r][2]))\\n        end = [base + k for k in range(4)]\\n        cx = (xs[i] + xs[i + 1]) / 2.0\\n        cz = (zs[j] + zs[j + 1]) / 2.0\\n        for k in range(4):\\n            k2 = (k + 1) % 4\\n            va, vb = ring[k], ring[k2]\\n            mx = (verts[va][0] + verts[vb][0]) / 2.0\\n            mz = (verts[va][2] + verts[vb][2]) / 2.0\\n            add_quad(verts, faces, [va, vb, end[k2], end[k]],\\n                     (cx - mx, 0.0, cz - mz))\\n        add_quad(verts, faces, end, (0.0, -1.0, 0.0))\\n\\n    mesh = bpy.data.meshes.new(name)\\n    mesh.from_pydata(verts, [], faces)\\n    mesh.validate()\\n    mesh.update()\\n    return mesh\\n\\n\\ndef build_box_mesh(name, sx, sy, sz):\\n    hx, hy, hz = sx / 2.0, sy / 2.0, sz / 2.0\\n    verts = [(ix * hx, iy * hy, iz * hz)\\n             for ix in (-1.0, 1.0)\\n             for iy in (-1.0, 1.0)\\n             for iz in (-1.0, 1.0)]\\n    faces = []\\n    add_quad(verts, faces, [0, 1, 3, 2], (-1.0, 0.0, 0.0))\\n    add_quad(verts, faces, [4, 5, 7, 6], (1.0, 0.0, 0.0))\\n    add_quad(verts, faces, [0, 1, 5, 4], (0.0, -1.0, 0.0))\\n    add_quad(verts, faces, [2, 3, 7, 6], (0.0, 1.0, 0.0))\\n    add_quad(verts, faces, [0, 2, 6, 4], (0.0, 0.0, -1.0))\\n    add_quad(verts, faces, [1, 3, 7, 5], (0.0, 0.0, 1.0))\\n    mesh = bpy.data.meshes.new(name)\\n    mesh.from_pydata(verts, [], faces)\\n    mesh.validate()\\n    mesh.update()\\n    return mesh\\n\\n\\ndef make_object(name, mesh, location):\\n    obj = bpy.data.objects.new(name, mesh)\\n    obj.location = location\\n    bpy.context.scene.collection.objects.link(obj)\\n    obj.name = name\\n    return obj\\n\\n\\ndef main():\\n    clear_scene()\\n\\n    make_object('socket_body', build_socket_mesh('socket_body'), (0.0, 0.0, 0.0))\\n    for pin_name, centre in PIN_CENTRES:\\n        make_object(pin_name, build_box_mesh(pin_name, PIN_X, PIN_Y, PIN_Z), centre)\\n\\n    bpy.context.view_layer.update()\\n\\n    expected = ['pin_left', 'pin_right', 'socket_body']\\n    found = sorted(o.name for o in bpy.data.objects)\\n    if found != expected or any(o.type != 'MESH' for o in bpy.data.objects):\\n        raise RuntimeError('Unexpected final objects: %r' % (found,))\\n\\n\\nmain()\\n\", \"description\": \"Clears the scene and creates exactly three mesh objects: socket_body (a 32 x 16 x 24 block centred at the origin with two blind cavities, 2.4 wide, 6.4 high and 8 deep, opening on the Y=-8 face at X=-5 and X=5) and pin_left / pin_right (2 x 7 x 6 boxes centred at (-5,-4.5,0) and (5,-4.5,0)). The cavities are built directly into a closed manifold mesh as real voids rather than cut with Boolean modifiers, so there are no modifiers to apply and no cutter objects. Each prong has 0.2 clearance per side in X and Z and 1.0 behind it in Y, so it does not intersect the block.\", \"uncertainty\": [\"The script was not run in Blender 5.2; it relies only on long-standing API calls (bpy.data, Mesh.from_pydata, mathutils.Vector).\", \"The cavities are modelled directly instead of with Boolean modifiers, on the reading that 'apply any Boolean modifiers' applies only if Booleans are used.\", \"The prongs' front faces are at Y=-8, flush with the plane of the block's front face. They sit inside the openings and do not touch the block, but an overlap checker with a coarse tolerance might flag the coplanar faces.\", \"The block's outer faces are split into several coplanar quads on a shared grid to keep the mesh manifold; the overall shape and dimensions are exact.\", \"Clearing the scene removes all existing objects and collections and any orphaned mesh, curve, light, camera and material data; the new objects are linked to the scene's root collection.\", \"Each prong's object origin is at its stated centre, with scale 1 and no rotation; socket_body's origin is at the world origin.\", \"No materials are assigned, since only geometry was requested.\"]}",
+  "parsed_answer": {
+    "script": "import bpy\nfrom mathutils import Vector\n\n# All values are exact model units; nothing is rescaled.\nBLOCK_X, BLOCK_Y, BLOCK_Z = 32.0, 16.0, 24.0\nCAV_CENTRES_X = (-5.0, 5.0)\nCAV_CENTRE_Z = 0.0\nCAV_W, CAV_H, CAV_DEPTH = 2.4, 6.4, 8.0\nPIN_X, PIN_Y, PIN_Z = 2.0, 7.0, 6.0\nPIN_CENTRES = (\n    ('pin_left', (-5.0, -4.5, 0.0)),\n    ('pin_right', (5.0, -4.5, 0.0)),\n)\n\n\ndef clear_scene():\n    try:\n        if bpy.context.mode != 'OBJECT':\n            bpy.ops.object.mode_set(mode='OBJECT')\n    except Exception:\n        pass\n    for obj in list(bpy.data.objects):\n        bpy.data.objects.remove(obj, do_unlink=True)\n    for coll in list(bpy.data.collections):\n        bpy.data.collections.remove(coll)\n    for store in (bpy.data.meshes, bpy.data.curves, bpy.data.lights,\n                  bpy.data.cameras, bpy.data.materials):\n        for block in list(store):\n            if block.users == 0:\n                store.remove(block)\n\n\ndef add_quad(verts, faces, idx, want):\n    # Append a quad, flipping its winding if needed so the normal follows 'want'.\n    idx = list(idx)\n    a = Vector(verts[idx[0]])\n    b = Vector(verts[idx[1]])\n    c = Vector(verts[idx[2]])\n    n = (b - a).cross(c - b)\n    if n.dot(Vector(want)) < 0.0:\n        idx.reverse()\n    faces.append(tuple(idx))\n\n\ndef build_socket_mesh(name):\n    # Block with two blind cavities built directly as one closed manifold mesh.\n    # The front and back faces share an X/Z grid so that no T-junctions occur.\n    hx, hy, hz = BLOCK_X / 2.0, BLOCK_Y / 2.0, BLOCK_Z / 2.0\n    y_front = -hy\n    y_back = hy\n    y_end = y_front + CAV_DEPTH\n\n    xs = [-hx]\n    for cx in sorted(CAV_CENTRES_X):\n        xs.append(cx - CAV_W / 2.0)\n        xs.append(cx + CAV_W / 2.0)\n    xs.append(hx)\n    zs = [-hz, CAV_CENTRE_Z - CAV_H / 2.0, CAV_CENTRE_Z + CAV_H / 2.0, hz]\n    nx, nz = len(xs), len(zs)\n    holes = set((1 + 2 * k, 1) for k in range(len(CAV_CENTRES_X)))\n\n    verts = []\n    for y in (y_front, y_back):\n        for j in range(nz):\n            for i in range(nx):\n                verts.append((xs[i], y, zs[j]))\n\n    def f(i, j):\n        return j * nx + i\n\n    def b(i, j):\n        return nx * nz + j * nx + i\n\n    faces = []\n\n    # Front face (Y = -8) with the two receptacle openings left open,\n    # and the back face (Y = +8) fully closed.\n    for j in range(nz - 1):\n        for i in range(nx - 1):\n            if (i, j) not in holes:\n                add_quad(verts, faces,\n                         [f(i, j), f(i + 1, j), f(i + 1, j + 1), f(i, j + 1)],\n                         (0.0, -1.0, 0.0))\n            add_quad(verts, faces,\n                     [b(i, j), b(i + 1, j), b(i + 1, j + 1), b(i, j + 1)],\n                     (0.0, 1.0, 0.0))\n\n    # Bottom and top faces.\n    for i in range(nx - 1):\n        add_quad(verts, faces,\n                 [f(i, 0), f(i + 1, 0), b(i + 1, 0), b(i, 0)],\n                 (0.0, 0.0, -1.0))\n        add_quad(verts, faces,\n                 [f(i, nz - 1), f(i + 1, nz - 1), b(i + 1, nz - 1), b(i, nz - 1)],\n                 (0.0, 0.0, 1.0))\n\n    # Left and right faces.\n    for j in range(nz - 1):\n        add_quad(verts, faces,\n                 [f(0, j), f(0, j + 1), b(0, j + 1), b(0, j)],\n                 (-1.0, 0.0, 0.0))\n        add_quad(verts, faces,\n                 [f(nx - 1, j), f(nx - 1, j + 1), b(nx - 1, j + 1), b(nx - 1, j)],\n                 (1.0, 0.0, 0.0))\n\n    # Blind cavities: four walls and an end cap at Y = 0, normals facing the void.\n    for (i, j) in sorted(holes):\n        ring = [f(i, j), f(i + 1, j), f(i + 1, j + 1), f(i, j + 1)]\n        base = len(verts)\n        for r in ring:\n            verts.append((verts[r][0], y_end, verts[r][2]))\n        end = [base + k for k in range(4)]\n        cx = (xs[i] + xs[i + 1]) / 2.0\n        cz = (zs[j] + zs[j + 1]) / 2.0\n        for k in range(4):\n            k2 = (k + 1) % 4\n            va, vb = ring[k], ring[k2]\n            mx = (verts[va][0] + verts[vb][0]) / 2.0\n            mz = (verts[va][2] + verts[vb][2]) / 2.0\n            add_quad(verts, faces, [va, vb, end[k2], end[k]],\n                     (cx - mx, 0.0, cz - mz))\n        add_quad(verts, faces, end, (0.0, -1.0, 0.0))\n\n    mesh = bpy.data.meshes.new(name)\n    mesh.from_pydata(verts, [], faces)\n    mesh.validate()\n    mesh.update()\n    return mesh\n\n\ndef build_box_mesh(name, sx, sy, sz):\n    hx, hy, hz = sx / 2.0, sy / 2.0, sz / 2.0\n    verts = [(ix * hx, iy * hy, iz * hz)\n             for ix in (-1.0, 1.0)\n             for iy in (-1.0, 1.0)\n             for iz in (-1.0, 1.0)]\n    faces = []\n    add_quad(verts, faces, [0, 1, 3, 2], (-1.0, 0.0, 0.0))\n    add_quad(verts, faces, [4, 5, 7, 6], (1.0, 0.0, 0.0))\n    add_quad(verts, faces, [0, 1, 5, 4], (0.0, -1.0, 0.0))\n    add_quad(verts, faces, [2, 3, 7, 6], (0.0, 1.0, 0.0))\n    add_quad(verts, faces, [0, 2, 6, 4], (0.0, 0.0, -1.0))\n    add_quad(verts, faces, [1, 3, 7, 5], (0.0, 0.0, 1.0))\n    mesh = bpy.data.meshes.new(name)\n    mesh.from_pydata(verts, [], faces)\n    mesh.validate()\n    mesh.update()\n    return mesh\n\n\ndef make_object(name, mesh, location):\n    obj = bpy.data.objects.new(name, mesh)\n    obj.location = location\n    bpy.context.scene.collection.objects.link(obj)\n    obj.name = name\n    return obj\n\n\ndef main():\n    clear_scene()\n\n    make_object('socket_body', build_socket_mesh('socket_body'), (0.0, 0.0, 0.0))\n    for pin_name, centre in PIN_CENTRES:\n        make_object(pin_name, build_box_mesh(pin_name, PIN_X, PIN_Y, PIN_Z), centre)\n\n    bpy.context.view_layer.update()\n\n    expected = ['pin_left', 'pin_right', 'socket_body']\n    found = sorted(o.name for o in bpy.data.objects)\n    if found != expected or any(o.type != 'MESH' for o in bpy.data.objects):\n        raise RuntimeError('Unexpected final objects: %r' % (found,))\n\n\nmain()\n",
+    "description": "Clears the scene and creates exactly three mesh objects: socket_body (a 32 x 16 x 24 block centred at the origin with two blind cavities, 2.4 wide, 6.4 high and 8 deep, opening on the Y=-8 face at X=-5 and X=5) and pin_left / pin_right (2 x 7 x 6 boxes centred at (-5,-4.5,0) and (5,-4.5,0)). The cavities are built directly into a closed manifold mesh as real voids rather than cut with Boolean modifiers, so there are no modifiers to apply and no cutter objects. Each prong has 0.2 clearance per side in X and Z and 1.0 behind it in Y, so it does not intersect the block.",
+    "uncertainty": [
+      "The script was not run in Blender 5.2; it relies only on long-standing API calls (bpy.data, Mesh.from_pydata, mathutils.Vector).",
+      "The cavities are modelled directly instead of with Boolean modifiers, on the reading that 'apply any Boolean modifiers' applies only if Booleans are used.",
+      "The prongs' front faces are at Y=-8, flush with the plane of the block's front face. They sit inside the openings and do not touch the block, but an overlap checker with a coarse tolerance might flag the coplanar faces.",
+      "The block's outer faces are split into several coplanar quads on a shared grid to keep the mesh manifold; the overall shape and dimensions are exact.",
+      "Clearing the scene removes all existing objects and collections and any orphaned mesh, curve, light, camera and material data; the new objects are linked to the scene's root collection.",
+      "Each prong's object origin is at its stated centre, with scale 1 and no rotation; socket_body's origin is at the world origin.",
+      "No materials are assigned, since only geometry was requested."
+    ]
+  },
+  "cli_result": {
+    "duration_api_ms": 80609,
+    "stop_reason": "end_turn",
+    "session_id": "cafcac49-4aab-43bb-b125-60ed31d6f1ce",
+    "total_cost_usd": 0.382296,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 1045,
+      "cache_read_input_tokens": 0,
+      "output_tokens": 9139,
+      "output_tokens_details": {
+        "thinking_tokens": 5408
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 1045,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 9139,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 1045,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1045
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-fable-5-2": {
+        "inputTokens": 2,
+        "outputTokens": 9139,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 1045,
+        "webSearchRequests": 0,
+        "costUSD": 0.382296,
+        "contextWindow": 200000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 5408,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 1045,
+        "canonicalModel": "claude-fable-5-2",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "{\"script\": \"import bpy\\nfrom mathutils import Vector\\n\\n# All values are exact model units; nothing is rescaled.\\nBLOCK_X, BLOCK_Y, BLOCK_Z = 32.0, 16.0, 24.0\\nCAV_CENTRES_X = (-5.0, 5.0)\\nCAV_CENTRE_Z = 0.0\\nCAV_W, CAV_H, CAV_DEPTH = 2.4, 6.4, 8.0\\nPIN_X, PIN_Y, PIN_Z = 2.0, 7.0, 6.0\\nPIN_CENTRES = (\\n    ('pin_left', (-5.0, -4.5, 0.0)),\\n    ('pin_right', (5.0, -4.5, 0.0)),\\n)\\n\\n\\ndef clear_scene():\\n    try:\\n        if bpy.context.mode != 'OBJECT':\\n            bpy.ops.object.mode_set(mode='OBJECT')\\n    except Exception:\\n        pass\\n    for obj in list(bpy.data.objects):\\n        bpy.data.objects.remove(obj, do_unlink=True)\\n    for coll in list(bpy.data.collections):\\n        bpy.data.collections.remove(coll)\\n    for store in (bpy.data.meshes, bpy.data.curves, bpy.data.lights,\\n                  bpy.data.cameras, bpy.data.materials):\\n        for block in list(store):\\n            if block.users == 0:\\n                store.remove(block)\\n\\n\\ndef add_quad(verts, faces, idx, want):\\n    # Append a quad, flipping its winding if needed so the normal follows 'want'.\\n    idx = list(idx)\\n    a = Vector(verts[idx[0]])\\n    b = Vector(verts[idx[1]])\\n    c = Vector(verts[idx[2]])\\n    n = (b - a).cross(c - b)\\n    if n.dot(Vector(want)) < 0.0:\\n        idx.reverse()\\n    faces.append(tuple(idx))\\n\\n\\ndef build_socket_mesh(name):\\n    # Block with two blind cavities built directly as one closed manifold mesh.\\n    # The front and back faces share an X/Z grid so that no T-junctions occur.\\n    hx, hy, hz = BLOCK_X / 2.0, BLOCK_Y / 2.0, BLOCK_Z / 2.0\\n    y_front = -hy\\n    y_back = hy\\n    y_end = y_front + CAV_DEPTH\\n\\n    xs = [-hx]\\n    for cx in sorted(CAV_CENTRES_X):\\n        xs.append(cx - CAV_W / 2.0)\\n        xs.append(cx + CAV_W / 2.0)\\n    xs.append(hx)\\n    zs = [-hz, CAV_CENTRE_Z - CAV_H / 2.0, CAV_CENTRE_Z + CAV_H / 2.0, hz]\\n    nx, nz = len(xs), len(zs)\\n    holes = set((1 + 2 * k, 1) for k in range(len(CAV_CENTRES_X)))\\n\\n    verts = []\\n    for y in (y_front, y_back):\\n        for j in range(nz):\\n            for i in range(nx):\\n                verts.append((xs[i], y, zs[j]))\\n\\n    def f(i, j):\\n        return j * nx + i\\n\\n    def b(i, j):\\n        return nx * nz + j * nx + i\\n\\n    faces = []\\n\\n    # Front face (Y = -8) with the two receptacle openings left open,\\n    # and the back face (Y = +8) fully closed.\\n    for j in range(nz - 1):\\n        for i in range(nx - 1):\\n            if (i, j) not in holes:\\n                add_quad(verts, faces,\\n                         [f(i, j), f(i + 1, j), f(i + 1, j + 1), f(i, j + 1)],\\n                         (0.0, -1.0, 0.0))\\n            add_quad(verts, faces,\\n                     [b(i, j), b(i + 1, j), b(i + 1, j + 1), b(i, j + 1)],\\n                     (0.0, 1.0, 0.0))\\n\\n    # Bottom and top faces.\\n    for i in range(nx - 1):\\n        add_quad(verts, faces,\\n                 [f(i, 0), f(i + 1, 0), b(i + 1, 0), b(i, 0)],\\n                 (0.0, 0.0, -1.0))\\n        add_quad(verts, faces,\\n                 [f(i, nz - 1), f(i + 1, nz - 1), b(i + 1, nz - 1), b(i, nz - 1)],\\n                 (0.0, 0.0, 1.0))\\n\\n    # Left and right faces.\\n    for j in range(nz - 1):\\n        add_quad(verts, faces,\\n                 [f(0, j), f(0, j + 1), b(0, j + 1), b(0, j)],\\n                 (-1.0, 0.0, 0.0))\\n        add_quad(verts, faces,\\n                 [f(nx - 1, j), f(nx - 1, j + 1), b(nx - 1, j + 1), b(nx - 1, j)],\\n                 (1.0, 0.0, 0.0))\\n\\n    # Blind cavities: four walls and an end cap at Y = 0, normals facing the void.\\n    for (i, j) in sorted(holes):\\n        ring = [f(i, j), f(i + 1, j), f(i + 1, j + 1), f(i, j + 1)]\\n        base = len(verts)\\n        for r in ring:\\n            verts.append((verts[r][0], y_end, verts[r][2]))\\n        end = [base + k for k in range(4)]\\n        cx = (xs[i] + xs[i + 1]) / 2.0\\n        cz = (zs[j] + zs[j + 1]) / 2.0\\n        for k in range(4):\\n            k2 = (k + 1) % 4\\n            va, vb = ring[k], ring[k2]\\n            mx = (verts[va][0] + verts[vb][0]) / 2.0\\n            mz = (verts[va][2] + verts[vb][2]) / 2.0\\n            add_quad(verts, faces, [va, vb, end[k2], end[k]],\\n                     (cx - mx, 0.0, cz - mz))\\n        add_quad(verts, faces, end, (0.0, -1.0, 0.0))\\n\\n    mesh = bpy.data.meshes.new(name)\\n    mesh.from_pydata(verts, [], faces)\\n    mesh.validate()\\n    mesh.update()\\n    return mesh\\n\\n\\ndef build_box_mesh(name, sx, sy, sz):\\n    hx, hy, hz = sx / 2.0, sy / 2.0, sz / 2.0\\n    verts = [(ix * hx, iy * hy, iz * hz)\\n             for ix in (-1.0, 1.0)\\n             for iy in (-1.0, 1.0)\\n             for iz in (-1.0, 1.0)]\\n    faces = []\\n    add_quad(verts, faces, [0, 1, 3, 2], (-1.0, 0.0, 0.0))\\n    add_quad(verts, faces, [4, 5, 7, 6], (1.0, 0.0, 0.0))\\n    add_quad(verts, faces, [0, 1, 5, 4], (0.0, -1.0, 0.0))\\n    add_quad(verts, faces, [2, 3, 7, 6], (0.0, 1.0, 0.0))\\n    add_quad(verts, faces, [0, 2, 6, 4], (0.0, 0.0, -1.0))\\n    add_quad(verts, faces, [1, 3, 7, 5], (0.0, 0.0, 1.0))\\n    mesh = bpy.data.meshes.new(name)\\n    mesh.from_pydata(verts, [], faces)\\n    mesh.validate()\\n    mesh.update()\\n    return mesh\\n\\n\\ndef make_object(name, mesh, location):\\n    obj = bpy.data.objects.new(name, mesh)\\n    obj.location = location\\n    bpy.context.scene.collection.objects.link(obj)\\n    obj.name = name\\n    return obj\\n\\n\\ndef main():\\n    clear_scene()\\n\\n    make_object('socket_body', build_socket_mesh('socket_body'), (0.0, 0.0, 0.0))\\n    for pin_name, centre in PIN_CENTRES:\\n        make_object(pin_name, build_box_mesh(pin_name, PIN_X, PIN_Y, PIN_Z), centre)\\n\\n    bpy.context.view_layer.update()\\n\\n    expected = ['pin_left', 'pin_right', 'socket_body']\\n    found = sorted(o.name for o in bpy.data.objects)\\n    if found != expected or any(o.type != 'MESH' for o in bpy.data.objects):\\n        raise RuntimeError('Unexpected final objects: %r' % (found,))\\n\\n\\nmain()\\n\", \"description\": \"Clears the scene and creates exactly three mesh objects: socket_body (a 32 x 16 x 24 block centred at the origin with two blind cavities, 2.4 wide, 6.4 high and 8 deep, opening on the Y=-8 face at X=-5 and X=5) and pin_left / pin_right (2 x 7 x 6 boxes centred at (-5,-4.5,0) and (5,-4.5,0)). The cavities are built directly into a closed manifold mesh as real voids rather than cut with Boolean modifiers, so there are no modifiers to apply and no cutter objects. Each prong has 0.2 clearance per side in X and Z and 1.0 behind it in Y, so it does not intersect the block.\", \"uncertainty\": [\"The script was not run in Blender 5.2; it relies only on long-standing API calls (bpy.data, Mesh.from_pydata, mathutils.Vector).\", \"The cavities are modelled directly instead of with Boolean modifiers, on the reading that 'apply any Boolean modifiers' applies only if Booleans are used.\", \"The prongs' front faces are at Y=-8, flush with the plane of the block's front face. They sit inside the openings and do not touch the block, but an overlap checker with a coarse tolerance might flag the coplanar faces.\", \"The block's outer faces are split into several coplanar quads on a shared grid to keep the mesh manifold; the overall shape and dimensions are exact.\", \"Clearing the scene removes all existing objects and collections and any orphaned mesh, curve, light, camera and material data; the new objects are linked to the scene's root collection.\", \"Each prong's object origin is at its stated centre, with scale 1 and no rotation; socket_body's origin is at the world origin.\", \"No materials are assigned, since only geometry was requested.\"]}",
+    "ttft_ms": 53214,
+    "type": "result",
+    "duration_ms": 80642,
+    "uuid": "84e880b9-7701-44bf-8971-38a35871f14a",
+    "ttft_stream_ms": 2063,
+    "time_to_request_ms": 29,
+    "first_content_frame_ms": 2063,
+    "queued_turn_count": 0,
+    "result_index": 0,
+    "model_usage_since_last_result": {
+      "claude-fable-5-2": {
+        "inputTokens": 2,
+        "outputTokens": 9139,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 1045,
+        "webSearchRequests": 0,
+        "costUSD": 0.382296,
+        "contextWindow": 200000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 5408,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 1045,
+        "canonicalModel": "claude-fable-5-2",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "credential_expires_at": "2026-12-14T11:28:49.458Z"
+  },
+  "exit_code": 0,
+  "id": "construct_receptacle-1",
+  "elapsed_seconds": 81.649
+}
