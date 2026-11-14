@@ -1,0 +1,90 @@
+{
+  "experimental_attempts": 16,
+  "completed": 14,
+  "incomplete": 2,
+  "sum_of_reported_list_price_equivalents_usd": 5.465029,
+  "attempts_with_unreported_cost": 2,
+  "note": "Subscription usage accounting, not a claim of additional charges. Aborted-call costs are unknown. Text availability checks excluded. Image-ingestion pilot included and identified separately in its directory.",
+  "attempts": [
+    {
+      "path": "results/20261114T170100451454Z-image-pilot/reference_open-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.06903200000000001
+    },
+    {
+      "path": "results/20261114T170133545682Z-perception/comparison-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.21352
+    },
+    {
+      "path": "results/20261114T170133545682Z-perception/comparison-2/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.18480000000000002
+    },
+    {
+      "path": "results/20261114T170133545682Z-perception/comparison-3/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.1442768
+    },
+    {
+      "path": "results/20261114T170133545682Z-perception/model_open-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.12148
+    },
+    {
+      "path": "results/20261114T170133545682Z-perception/model_open-2/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.11072
+    },
+    {
+      "path": "results/20261114T170133545682Z-perception/model_open-3/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.11428
+    },
+    {
+      "path": "results/20261114T170133545682Z-perception/reference_open-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.044785200000000004
+    },
+    {
+      "path": "results/20261114T170133545682Z-perception/reference_open-2/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.0460252
+    },
+    {
+      "path": "results/20261114T170133545682Z-perception/reference_open-3/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.0430252
+    },
+    {
+      "path": "results/20261114T170306703685Z-reconstruction/reconstruct_explicit-1/result.json",
+      "status": "infrastructure_error",
+      "reported_cost_usd": null
+    },
+    {
+      "path": "results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.9943576
+    },
+    {
+      "path": "results/20261114T170306703685Z-reconstruction/reconstruct_open-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.947472
+    },
+    {
+      "path": "results/20261114T170306703685Z-reconstruction/reconstruct_open-2/result.json",
+      "status": "infrastructure_error",
+      "reported_cost_usd": null
+    },
+    {
+      "path": "results/20261114T171043643045Z-open-timeout-replacement/reconstruct_open-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 0.7878172000000001
+    },
+    {
+      "path": "results/20261114T171224010444Z-explicit-timeout-replacement-1/reconstruct_explicit-1/result.json",
+      "status": "completed",
+      "reported_cost_usd": 1.6434376
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "calls": 1,
+  "completed": 1,
+  "cli_reported_cost_usd": 1.643438,
+  "runs": [
+    {
+      "id": "reconstruct_explicit-1",
+      "status": "completed"
+    }
+  ]
+}

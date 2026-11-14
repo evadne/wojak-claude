@@ -1,0 +1,69 @@
+{
+  "assessor": "Codex, manual source review and inspection of fixed front and oblique renders",
+  "blinding": "The assessor knew the conditions. This is an exploratory, single-item study, not a blinded reliability estimate.",
+  "score_definition": "A depicted seated plug on the socket-bearing front face of the same strip, connected to the cable. Mechanical fit, electrical function, watertightness and printability are not assessed.",
+  "completed": [
+    {
+      "run": "20261114T170306703685Z-reconstruction",
+      "id": "reconstruct_open-1",
+      "condition": "open",
+      "executes_without_geometry_repairs": true,
+      "distinct_plug": true,
+      "cable_meets_plug": true,
+      "depicts_plug_seated_on_strip_socket_face": false,
+      "attachment": "Neck beside the strip; two front outlets remain empty.",
+      "source_evidence": "Independent P0 vector at line 273 and plug direction D at line 289 determine plug location. The plug is not derived from either outlet's transform. The model's description explicitly says plug pushed into the neck.",
+      "views_inspected": ["geometry/front.png", "geometry/oblique.png"]
+    },
+    {
+      "run": "20261114T171043643045Z-open-timeout-replacement",
+      "id": "reconstruct_open-1",
+      "condition": "open",
+      "replacement_for": "20261114T170306703685Z-reconstruction/reconstruct_open-2",
+      "executes_without_geometry_repairs": true,
+      "distinct_plug": true,
+      "cable_meets_plug": true,
+      "depicts_plug_seated_on_strip_socket_face": false,
+      "attachment": "Shoulder/neck beside the strip; two front outlets remain empty.",
+      "source_evidence": "P maps estimated drawing pixels to world X/Z. pb1 and pb2 at lines 240-241 independently locate the plug. The source comment and the model's description both identify shoulder insertion.",
+      "views_inspected": ["geometry/front.png", "geometry/oblique.png"]
+    },
+    {
+      "run": "20261114T170306703685Z-reconstruction",
+      "id": "reconstruct_explicit-2",
+      "condition": "explicit",
+      "executes_without_geometry_repairs": true,
+      "distinct_plug": true,
+      "cable_meets_plug": true,
+      "depicts_plug_seated_on_strip_socket_face": true,
+      "attachment": "Lowest front socket, with two other empty outlets above.",
+      "source_evidence": "PZ is SOCKET_Z[PLUG_SOCKET]. Plug flange and body use sloc, the strip's local transform; flange contact matches the receiving plate's front plane. The model says it interpreted the drawing as head insertion and moved the plug to obey the extra instruction.",
+      "views_inspected": ["geometry/front.png", "geometry/oblique.png"]
+    },
+    {
+      "run": "20261114T171224010444Z-explicit-timeout-replacement-1",
+      "id": "reconstruct_explicit-1",
+      "condition": "explicit",
+      "replacement_for": "20261114T170306703685Z-reconstruction/reconstruct_explicit-1",
+      "executes_without_geometry_repairs": true,
+      "distinct_plug": true,
+      "cable_meets_plug": true,
+      "depicts_plug_seated_on_strip_socket_face": true,
+      "attachment": "Lowest front socket, with two other empty outlets above.",
+      "source_evidence": "F3 is the receiving face_frame(PLUG_Z). Socket plate, plug blades, plug body, strain relief and final cable points all use F3. The model again describes adding an occupied lower socket to meet the extra instruction.",
+      "views_inspected": ["geometry/front.png", "geometry/oblique.png"]
+    }
+  ],
+  "incomplete_no_quality_score": [
+    {"run": "20261114T170306703685Z-reconstruction", "id": "reconstruct_open-2", "reason": "300-second CLI timeout"},
+    {"run": "20261114T170306703685Z-reconstruction", "id": "reconstruct_explicit-1", "reason": "300-second CLI timeout"}
+  ],
+  "interpretation": [
+    "Both completed open reconstructions depict neck/shoulder insertion; both completed explicit reconstructions depict front-socket insertion.",
+    "The scripts and renders show that this model can construct the requested relation when it is stated explicitly under these settings.",
+    "The open scripts resolve the drawing's ambiguous connection using independently placed geometry. The explicit scripts bind plug geometry to a receiving socket frame. This is an implementation observation in these samples, not evidence about proprietary internal representations.",
+    "The explicit condition supplies intended semantics, directs attention to the connection, specifies a receiving face and suggests an occluded third socket. Their causal contributions are not isolated.",
+    "The two conditions use different fresh generations and are not seed-paired. One completed sample per condition comes from a longer-deadline timeout replacement. All attempts are retained and no completed scene was selected or rejected based on appearance.",
+    "These results reproduce the disputed arrangement in a restricted open-loop workflow and demonstrate a possible remedy. They do not establish why the original author's run produced it, or estimate a model-wide failure rate."
+  ]
+}
