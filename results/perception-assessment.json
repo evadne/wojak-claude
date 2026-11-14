@@ -7,21 +7,21 @@
       "id": "reference_open-1",
       "infers_self_plugging_joke": true,
       "establishes_literal_socket_insertion_from_pixels": false,
-      "acknowledges_attachment_ambiguity": true,
+      "reports_attachment_uncertainty": true,
       "evidence": "Description puts the tip at the strip/head junction. Uncertainty says it may enter the strip, the head, or rest against the junction; self-plugging is explicitly an inference."
     },
     {
       "id": "reference_open-2",
       "infers_self_plugging_joke": true,
       "establishes_literal_socket_insertion_from_pixels": false,
-      "acknowledges_attachment_ambiguity": true,
+      "reports_attachment_uncertainty": true,
       "evidence": "Description and evidence alternately say strip side, strip body/base, or strip/head junction; uncertainty explicitly leaves that distinction unresolved."
     },
     {
       "id": "reference_open-3",
       "infers_self_plugging_joke": true,
       "establishes_literal_socket_insertion_from_pixels": false,
-      "acknowledges_attachment_ambiguity": true,
+      "reports_attachment_uncertainty": true,
       "evidence": "Claims side insertion in the description, then notes that the plug does not appear to occupy either visible front outlet and that its exact connection is uncertain."
     }
   ],
@@ -71,8 +71,8 @@
   "interpretation": [
     "These answers distinguish recognition of the intended self-plugging joke from certainty about literal attachment geometry.",
     "The sculpture-only answers demonstrate access to the head-versus-outlet distinction under an open description prompt. The pilot does not support a blanket inability to perceive this attachment.",
-    "None of the comparisons independently endorses the author's specific attachment-mismatch judgement. This is a finding about the responses, not proof that the reference and sculpture are geometrically equivalent.",
-    "The drawing's ambiguity is a confound: a model can identify the conventional joke while declining to assert an occupied front socket. Reconstruction follow-up tests whether supplying that intended relation changes geometry.",
+    "None of the comparisons endorses the author's specific attachment-mismatch judgement. This is a finding about the responses, not proof that the reference and sculpture are geometrically equivalent. Shared omissions in one model's descriptions and comparisons cannot independently establish reference fidelity.",
+    "The responses report uncertainty about attachment; that does not establish ambiguity or insufficient grounding in the source drawing. Failure to attend to or integrate distinguishing visual cues is an alternative. Reconstruction follow-up changes interpretation, attention and geometric constraints together, so their contributions remain unseparated.",
     "No model-wide rate, architectural mechanism, training objective or statistically reliable treatment effect is established."
   ]
 }

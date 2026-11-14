@@ -61,9 +61,10 @@
   "interpretation": [
     "Both completed open reconstructions depict neck/shoulder insertion; both completed explicit reconstructions depict front-socket insertion.",
     "The scripts and renders show that this model can construct the requested relation when it is stated explicitly under these settings.",
-    "The open scripts resolve the drawing's ambiguous connection using independently placed geometry. The explicit scripts bind plug geometry to a receiving socket frame. This is an implementation observation in these samples, not evidence about proprietary internal representations.",
+    "The open scripts place the plug independently of a receiving socket. The explicit scripts bind plug geometry to a receiving socket frame. This is an implementation observation in these samples, not evidence about proprietary internal representations or ambiguity in the drawing.",
     "The explicit condition supplies intended semantics, directs attention to the connection, specifies a receiving face and suggests an occluded third socket. Their causal contributions are not isolated.",
     "The two conditions use different fresh generations and are not seed-paired. One completed sample per condition comes from a longer-deadline timeout replacement. All attempts are retained and no completed scene was selected or rejected based on appearance.",
-    "These results reproduce the disputed arrangement in a restricted open-loop workflow and demonstrate a possible remedy. They do not establish why the original author's run produced it, or estimate a model-wide failure rate."
+    "The models' statements that they moved the plug from the head describe their readings of the drawing, not an independent adjudication of its cues. Omitted or incorrectly weighted distinguishing features could explain both the initial placements and the reported uncertainty.",
+    "These results reproduce the disputed arrangement in a restricted open-loop workflow and demonstrate a possible remedy. They do not establish why the original author's run produced it, independently establish source ambiguity, or estimate a model-wide failure rate."
   ]
 }
