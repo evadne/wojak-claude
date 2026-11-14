@@ -1,0 +1,49 @@
+{
+  "protocol_path": "protocol/reconstruction.json",
+  "protocol_sha256": "1826fdec59d9e30b341fe86e5a1e36d2faca6939a6fb39e820cb3801562d2165",
+  "effective_protocol": {
+    "version": 1,
+    "purpose": "Probe open-loop geometric reconstruction and the effect of an explicit attachment constraint, after the image-ingestion pilot but before collecting reconstruction answers.",
+    "model": "claude-fable-5-2",
+    "effort": "high",
+    "repeats": 2,
+    "concurrency": 2,
+    "max_budget_usd_per_call": 2.0,
+    "timeout_seconds": 300,
+    "system_prompt": "You are creating a Blender Python script from a reference image. Use only the image and instructions in this conversation. Return exactly one JSON object without Markdown fences, with keys script (the complete Python source as a string), description (a short string), and uncertainty (an array of strings).",
+    "conditions": [
+      {
+        "id": "reconstruct_open",
+        "images": [
+          "reference.png"
+        ],
+        "prompt": "Write a self-contained Blender 5.2 Python script that builds a 3D sculpture corresponding to the drawing. Match the visible parts, their arrangement and overall form. The geometry may be stylised. Use an overall height of approximately 100 Blender units. Z is up; the front of the sculpture faces negative Y. Create geometry only: no cameras, lights, rendering, file reads or writes, external assets, add-ons, shell commands or network access. You may import only bpy, math and mathutils. Clear the starting scene and build the sculpture. Overlapping solid meshes are acceptable for this visual study; watertightness will not be scored. Return the script, a short description, and uncertainties as the requested JSON object."
+      },
+      {
+        "id": "reconstruct_explicit",
+        "images": [
+          "reference.png"
+        ],
+        "prompt": "Write a self-contained Blender 5.2 Python script that builds a 3D sculpture corresponding to the drawing. Match the visible parts, their arrangement and overall form. The geometry may be stylised. Use an overall height of approximately 100 Blender units. Z is up; the front of the sculpture faces negative Y. Create geometry only: no cameras, lights, rendering, file reads or writes, external assets, add-ons, shell commands or network access. You may import only bpy, math and mathutils. Clear the starting scene and build the sculpture. Overlapping solid meshes are acceptable for this visual study; watertightness will not be scored. Additional constraint: the cable's free end must end in a distinct plug seated in a socket on the front face of that same power strip, perpendicular to the socket face. The occupied socket can be hidden by the plug; retain two other visible empty sockets above it. The plug must mate with the strip, rather than enter the head beside it. Return the script, a short description, and uncertainties as the requested JSON object."
+      }
+    ],
+    "scoring_plan": {
+      "method": "Inspect generated source and front/oblique renders. Score whether the plug mates visibly with the strip's socket-bearing face, whether the cable meets the plug, whether a plug-shaped end is present, and whether geometry executes. Retain ambiguous cases. Do not infer success from object names or the model's description alone.",
+      "execution": "Review the generated script before executing it. Rendering and saving are performed by the experimenter's wrapper, not by the model. Retain errors and any compatibility corrections; never silently repair the scene."
+    },
+    "limitations": [
+      "Two fresh sessions per condition are illustrative and cannot establish a reliable treatment effect.",
+      "The explicit condition supplies an intended interpretation of an ambiguous drawing as well as a geometric constraint, so any improvement cannot be attributed uniquely to attention or geometry planning.",
+      "This is open-loop code generation with no tool access or rendered feedback to the generating session. It does not reproduce the original benchmark's unknown agent workflow.",
+      "The fixed scale, orientation, Blender API and allowance for overlapping meshes differ from an unrestricted modelling or printing task.",
+      "The control and explicit prompts differ only by the additional constraint sentence group. Calls are fresh, not paired by a random seed.",
+      "The image pilot was read before this follow-up protocol was committed. Its response expressed uncertainty about the plug's depicted attachment."
+    ]
+  },
+  "cli_version": "2.1.321 (Claude Code)",
+  "git_commit": "4fbdf6af468040ac0ea766c83e2e6644c0aabf29",
+  "selected_conditions": [
+    "reconstruct_open",
+    "reconstruct_explicit"
+  ]
+}
