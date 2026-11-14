@@ -1,107 +1,122 @@
-# Wojak visual relationship investigation
+# wojak-claude
 
-Targeted probes of Claude Fable 5.2's interpretation and reconstruction of a drawing in which a power strip's own plug occupies one of its sockets. The published sculpture appears to put the cable end into the head beside the strip. The experiment distinguishes perception of the reference, perception of the sculpture, and detection of the difference.
+An empirical notebook on what Claude preserves, omits and invents when reconstructing a drawing in 3D.
 
-This is a study of one example. It does not reproduce the original benchmark's unpublished prompt or agent workflow, and cannot establish a proprietary architectural cause or a model-wide failure rate.
+The starting example is a Wojak whose head incorporates a power strip with its own cable plugged back into it. A published 3D replica appeared to merge the cable end into the head beside the strip. This study uses fresh Claude sessions, retained Blender geometry and independent mesh checks to investigate that discrepancy.
 
-The current research question and hypotheses are retained in [the study design](docs/study-design.md). [STUDY-STATE.json](STUDY-STATE.json) records the active phase and continuation point. All study material belongs in this existing Git repository; normal commits are the retention mechanism.
+**Initial snapshot: 14 November 2026.** The repository contains **22 experimental attempts, 20 completed answers, two retained process timeouts and ten executed Blender scenes**. It is a small, single-image investigation. The original author's prompt, generated mesh and agent trace are unavailable, so these experiments do not reproduce or explain that original run conclusively.
 
-**Current findings:** explicit attachment instructions produced the depicted connection in two replicas, but those models still place prongs inside solid plastic. A general fidelity-check prompt did not produce a seated receiving socket in either of two new trials. Two text-only controls with explicit cavity dimensions do construct actual clear receptacles. These are distinct observations about visual relationships, volumetric geometry and available construction capability. Model-reported uncertainty does not establish insufficient grounding in the drawing.
+## What we found
 
-## Inputs and provenance
+| Probe | Completed examples | Observation |
+| --- | ---: | --- |
+| Reference descriptions | 3 | All recognise the self-plugging joke and qualify their account of the precise connection. |
+| Published-sculpture descriptions | 3 | All describe the cable end entering the head beside the strip. |
+| Drawing/sculpture comparisons | 3 | All treat the attachment as similar; all notice the change from eye-origin tears to mouth-origin drips. |
+| Initial open reconstruction | 2 | Both put the plug in the neck/shoulder beside the strip. |
+| Explicit attachment instruction | 2 | Both depict the plug seated on a front socket, but the prongs intersect solid plastic. |
+| Fresh baseline for the fidelity control | 2 | One head/neck contact and one strip contact without a supported receiving socket. |
+| General fidelity/checking instruction | 2 | The same category counts as the fresh baseline; neither depicts a seated receiving socket. |
+| Fully specified text-only receptacles | 2 | Both construct actual cavities and pass independent clearance, volume, bounds and object-count checks. |
 
-`inputs/provenance.json` records the supplied screenshot, its literal caption-free drawing crop, and two renders published by the [benchmark](https://wojak-bench.dev.pion.dev/). The original post's text and model attribution are excluded from every model input. Image hashes are recorded again per request.
+The table covers 19 completed main observations. One additional completed image-ingestion pilot is retained separately. The two timed-out calls have no quality score; their fresh replacements are included in the completed reconstruction examples.
 
-[Contextual source snapshots](evidence/README.md) retain the publisher's intended subject, reported revision history and author-post context separately from model inputs, with retrieval times and hashes. The original prompt and modelling trace remain unavailable.
+### A connection can look right while its geometry is wrong
 
-```sh
-/usr/bin/python3 scripts/prepare_inputs.py /path/to/screenshot.jpg
-```
+| Source drawing | A replica that passed the depicted-attachment criterion | The same replica with the plug hidden for inspection |
+| --- | --- | --- |
+| <img src="inputs/reference.png" width="220" alt="Reference drawing with a power-strip head and returning cable"> | <img src="results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/oblique.png" width="300" alt="Generated replica with its plug placed on the lowest front socket"> | <img src="results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/under-plug.png" width="300" alt="Inspection view exposing solid plates and surface details beneath the plug"> |
 
-Input preparation uses macOS `sips` for a literal crop, not a generative edit. The crop coordinates are specific to the supplied 900 × 1280 screenshot. Review the crop before using it.
+In both attachment-success replicas, the housing remains solid where the prongs enter it. Exact Boolean intersection measures **73.1% of each prong's volume inside plastic in one scene and 68.8% in the other**. The outlet marks are positive surface geometry rather than receiving voids. The checker is calibrated against a solid block, a shallow recess and a genuinely hollow receptacle with known expected results.
 
-## Protocol and execution
+The [text-only control's actual cavities](results/20261114T181143378123Z-receptacle-construction/construct_receptacle-1/geometry/open-receptacles.png) demonstrate available construction capability under explicit requirements. They do not demonstrate that the model will preserve that property spontaneously from an image. Inspection views change named objects' render visibility only; the original scene files remain unchanged and their hashes are checked.
 
-The prompts, repetitions, settings and scoring criteria are committed in `protocol/perception.json` before collecting experimental answers. Each call uses a fresh, non-persistent Claude Code session, the exact model ID, high effort, a fixed system prompt, safe mode and no tools or MCP servers. The subscription login is used; credentials are never saved here.
+The earlier sculpture prompt permitted overlapping solids and excluded mechanical mating. The volumetric audit adds a separate criterion while retaining the earlier attachment scores.
+
+## What the findings mean
+
+The study separates four questions:
+
+1. **Recognition:** does the response identify the subject and its familiar meaning?
+2. **Fidelity:** does the reconstruction preserve the features and relationships that distinguish this particular drawing?
+3. **Geometry:** do apparent holes and connections exist as the required volumes and surfaces?
+4. **Verification:** can a check detect an omission independently of the generator's description?
+
+A model's reported uncertainty does **not** establish that the source lacks sufficient clues. Likewise, agreement between the same model's description, generator and comparison can reflect a shared omission. Neither observation independently validates fidelity.
+
+The general-check result concerns one wording and two samples per condition. The text-only control supplies exact geometry and therefore tests a different task. These findings do not estimate a model-wide failure rate, identify a proprietary internal mechanism, or establish that more elaborate prompts cannot help.
+
+Read the [commentary](docs/commentary.md) for the distinction between broad resemblance, identifying features and physical affordances. The [detailed report](docs/study-report.md) retains the observations and their interpretation; [study design](docs/study-design.md) records hypotheses and experimental decisions.
+
+## Method and retained evidence
+
+- **Model:** exact `claude-fable-5-2`, high effort, first-party provider through Claude Code 2.1.321.
+- **Isolation:** fresh, non-persistent sessions; fixed system prompts; safe mode; no tools or MCP servers. Reconstruction sessions receive no rendered feedback.
+- **Inputs:** a literal crop excluding the post's caption and model attribution, or the publisher's retained sculpture renders. Text-only controls receive no images. Source bytes and hashes are retained.
+- **Geometry:** generated Python executed in Blender 5.2.1 LTS after source review. Every completed construction ran without geometry repairs and has fixed front/oblique renders and a saved scene.
+- **Scoring:** source and render inspection by an assessor who knew the conditions; independent evaluated-mesh intersection and dimensional checks for the receptacle control.
+- **Provenance:** protocols committed before their corresponding calls; image hashes, effective prompts, model settings, code revisions, raw streams, answers and failures retained per attempt.
+- **Sampling limits:** the dispatch seed shuffles call order; it does not control model sampling. Temperature and generation seed are not set by these CLI invocations.
+
+The original 300-second construction deadline excluded two calls still reporting progress. A committed recovery rule allowed one fresh replacement per timeout with a 600-second deadline. Both original attempts remain in the record. Later cohorts used 600 seconds from the outset.
+
+[Accounting](results/accounting.json) reports $10.882532 in CLI list-price equivalents for completed experimental calls. Costs of two aborted calls are unknown. These figures are usage accounting, not claims of additional subscription charges; text-only availability checks are outside the dataset.
+
+## Read the evidence
+
+| Location | Contents |
+| --- | --- |
+| [inputs/](inputs/) | Original screenshot, caption-free crop, publisher renders and provenance hashes |
+| [evidence/](evidence/README.md) | Dated contextual webpage snapshots, attribution and retrieval metadata; never supplied to model sessions |
+| [protocol/](protocol/) | Exact prompts, settings, scoring criteria, recovery policies and audit cases |
+| [results/](results/) | Raw attempts, extracted answers, source, renders, scenes, audit outputs and assessments |
+| [Perception assessment](results/perception-assessment.json) | Complete-answer review of the nine perception observations |
+| [Initial reconstruction assessment](results/reconstruction-assessment.json) | Four completed image reconstructions and retained timeout exclusions |
+| [General fidelity assessment](results/fidelity-check-assessment.json) | Fresh baseline versus a general checking instruction |
+| [Receptacle assessment](results/receptacle-assessment.json) | Physical collision measurements and text-only capability controls |
+| [scripts/](scripts/) | Collection, input preparation, rendering, geometry auditing and evidence verification |
+| [STUDY-STATE.json](STUDY-STATE.json) | Completed cohorts and the next continuation point |
+
+Historical protocols and raw answers retain their original wording, including assumptions corrected by later assessments. The current interpretation does not promote the models' statements of ambiguity into a fact about the drawing.
+
+## Verify locally without model calls
+
+Python 3 is sufficient for the evidence checker and unit tests; they use the standard library. The commands below use the macOS system interpreter used in this study. Substitute another working Python 3 interpreter on other systems.
 
 ```sh
 /usr/bin/python3 -m unittest discover -s tests -v
-/usr/bin/python3 scripts/probe.py protocol/perception.json --dry-run
-/usr/bin/python3 scripts/probe.py protocol/perception.json --label perception
-```
-
-Each result directory retains the effective protocol, committed code revision, image hashes, verbatim prompts, CLI command, raw output stream, standard error, complete CLI result and extracted answer. Authentication errors, timeouts and unexpected model IDs invalidate a call; they are not counted as model mistakes. CLI cost figures are list-price equivalents and are not a statement of additional charges to a subscription.
-
-The runner now writes raw streams to disk during inference, retaining progress even if the host is interrupted. To check the retained study without making model calls:
-
-```sh
 /usr/bin/python3 scripts/verify_study.py
 git fsck --full
 ```
 
-During an active collection or before all completed scripts have been rendered, use `scripts/verify_study.py --allow-active` to report the remaining work separately from integrity errors.
+The verifier checks input and protocol hashes, request/answer consistency, raw/final results, the exact model and provider, absence of tools/MCP servers, source hashes, retained views/scenes, calibration reports and historical code versions. During an active collection, `--allow-active` reports unfinished calls and renders separately from integrity errors.
 
-The first study has three conditions with three sessions each: reference alone, sculpture alone, and comparison. Assessment is manual and must retain qualifications and contradictory evidence. The open descriptions do not name the expected objects or failure. The comparison explicitly asks about connections and therefore provides an attentional cue.
+Recompute the text-control geometry audit with Blender, choosing a new output path so the retained report remains unchanged:
 
-## Perception observations
+```sh
+WOJAK_BLENDER="/Applications/Blender.app/Contents/MacOS/Blender"
+"$WOJAK_BLENDER" --background --factory-startup --python-exit-code 1 \
+  --python scripts/audit_receptacles.py -- \
+  protocol/receptacle-control-audit.json \
+  --out /tmp/wojak-receptacle-check.json
+```
 
-The main series completed nine calls with the requested model and no infrastructure failures. The image-ingestion pilot is retained separately. Manual assessment of every complete answer is in [perception-assessment.json](results/perception-assessment.json); raw answers are under [the main run](results/20261114T170133545682Z-perception).
+Blender and Claude Code are external prerequisites, not vendored dependencies. The recorded versions define the tested environment.
 
-| Condition | Observation in these three sessions |
-| --- | --- |
-| Reference alone | All infer the self-plugging joke; all qualify the precise connection as ambiguous. |
-| Sculpture alone | All describe the cable end entering the head beside the strip; none unconditionally asserts literal socket insertion. |
-| Both together | All treat the attachment as similar; none independently identifies the author's intended connection error. All notice the relocation of tears to mouth drips. |
+## Continue the programme
 
-These are observations about the model's responses. The sculpture-only responses identify the relevant attachment, while the comparison responses regard the drawing as compatible with it. Their agreement is not an independent judgement of reference fidelity: the same model may omit the same distinguishing cues in description, construction and comparison. The observations cannot establish source ambiguity or identify the cause of the original generation failure.
+Read [STUDY-STATE.json](STUDY-STATE.json) before starting another cohort. All registered cohorts in this snapshot are complete. The next comparison is to keep the image task fixed while adding a functional-geometry requirement alone, without supplying the intended plug placement. Attachment and receiving volume must remain separate scores.
 
-## Reconstruction follow-up
+New inference uses the operator's own authenticated Claude CLI and consumes its usage allowance. Commit a new protocol before collection, inspect the dry run, use a fresh label, retain failed attempts, and review generated source before executing it. For example, a dry run makes no model call:
 
-[The follow-up protocol](protocol/reconstruction.json) compares two open reconstruction sessions with two sessions supplying an explicit plug-in-own-socket constraint. It was committed after reading the image-ingestion pilot and before collecting reconstruction answers. The generator returns Blender Python without tools or rendered feedback; source and fixed front/oblique renders will be assessed together. This tests a restricted open-loop workflow rather than the original unknown modelling workflow.
+```sh
+/usr/bin/python3 scripts/probe.py protocol/fidelity-check.json --dry-run
+```
 
-The second open call exceeded the original 300-second process deadline while still reporting thinking progress. A [recovery policy](protocol/timeout-recovery-policy.json) was committed before the explicit-condition outcomes were known: one fresh replacement per timed-out call, with the same inputs and settings and a 600-second process deadline. Both attempts are retained; timeouts are not geometric failures and their unreported costs are not counted as zero.
+Raw CLI records include session identifiers and original workstation paths. They are retained for auditability in this private repository. Credentials and account configuration are not part of the study.
 
-All four completed scripts executed in Blender 5.2.1 and were inspected in both views without geometry repairs. Two initial calls timed out; their fresh replacements both completed. The last replacement took 409 seconds, confirming that the original process deadline could exclude a valid response.
+## Source context
 
-| Condition | Completed scenes | Depicted attachment | Inspect an oblique render |
-| --- | --- | --- | --- |
-| Open reconstruction | 2 | Both enter the neck/shoulder beside the strip | [Original call](results/20261114T170306703685Z-reconstruction/reconstruct_open-1/geometry/oblique.png), [replacement](results/20261114T171043643045Z-open-timeout-replacement/reconstruct_open-1/geometry/oblique.png) |
-| Explicit socket constraint | 2 | Both seat the plug on the lowest front socket | [Original call](results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/oblique.png), [replacement](results/20261114T171224010444Z-explicit-timeout-replacement-1/reconstruct_explicit-1/geometry/oblique.png) |
+The starting claim is [Lukas Petersson's post](https://x.com/lukaspet/status/2121371593943466167). The [publisher's benchmark page](https://wojak-bench.dev.pion.dev/) describes the intended self-plugged figure and reports that the shown object was its third version, with earlier feedback concerning the face. That is partial context, not the original prompt or full revision trace.
 
-The [complete reconstruction assessment](results/reconstruction-assessment.json) records source evidence, view inspection and exclusions. Socket success means the depicted attachment, not mechanical mating or electrical function. The assessor knew the conditions.
-
-The implementation difference is concrete. The open scripts place the plug using independent coordinates near the neck; one explicitly maps estimated image pixels to world X/Z. The constrained scripts derive both the plug and receiving socket from the same local frame. Their descriptions say they moved the plug from the head to satisfy the extra instruction. This establishes the generated placements and the models' accounts of them. It does not establish that the reference required additional information: overlooked or poorly integrated visual clues remain a possible explanation.
-
-## Interpretation and limits
-
-The pilot separates recognising the familiar self-plugging joke, observing a particular attachment, and constructing an assembly. The sculpture-only descriptions correctly locate the cable end beside the strip. The comparisons do not identify that location as a change from the drawing. The open generations then choose neck/shoulder insertion, while the explicit instruction changes the choice and its implementation. A shared omission across these tasks could produce that pattern; model-reported uncertainty is not evidence that the source itself is insufficient.
-
-The drawing supplies concrete grounding cues: a distinct plug body at the cable's end, a cord originating at the strip, the socket-bearing face, and contours and overlaps at the returning plug. Their omission or incorrect weighting must be investigated before attributing failure to source ambiguity. The experiment has not independently adjudicated whether those cues suffice to recover the intended attachment. The initial protocols' references to an ambiguous drawing are assumptions, not established findings; the protocols and raw responses remain unchanged.
-
-Fidelity also requires selecting the right features. A caricature can preserve a person's identity through exaggerated distinguishing features, while a detailed generic face can lose that identity. Here the analogous requirement is to preserve the particular attachment relationship, not merely a recognisable head, strip and cable loop. Freedom to choose unseen depth or simplify a surface does not by itself justify changing that relationship. A useful assessment should identify which distinguishing features and relationships are retained, omitted or invented, and test whether the model's comparison shares the generator's omissions.
-
-The evidence supports studying visual cue use, fidelity choices and explicit relation enforcement. It does not isolate a vision encoder defect, establish an absence of spatial understanding, or show that the original benchmark harness used the same process. Because the explicit condition supplies an interpretation, makes the relation salient and specifies a constraint, its apparent benefit cannot distinguish their contributions. A stronger next study would independently establish the relevant visual cues and attachment relationships, then test their retention under changes in style, detail and viewpoint.
-
-The first round contains nine main perception answers, four completed reconstruction answers, one separately retained image-ingestion pilot, and two retained process timeouts. [Accounting](results/accounting.json) now covers all rounds and distinguishes reported list-price equivalents from the unknown costs of aborted calls. The initial text availability checks are outside the experimental dataset.
-
-## General fidelity control
-
-[The second-round protocol](protocol/fidelity-check.json) adds only a general requirement to identify distinguishing features, trace connections and check their preservation. It supplies no object-specific attachment answer. Two fresh baseline calls ran alongside two fresh general-check calls, using the original baseline prompt unchanged and a seeded shuffled dispatch order. Both conditions used a 600-second deadline; all four completed and executed without geometry repairs.
-
-Each condition produced one neck-contact case and one strip-contact case without a receiving socket. Neither general-check trial produced a seated receiving socket. [The full assessment](results/fidelity-check-assessment.json) preserves those distinctions and the evidence from both views. This is an observation about this wording and small cohort, not evidence that checking prompts cannot help.
-
-## Receptacle geometry and functional control
-
-The [independent mesh audit](results/receptacle-audit.json) measures the retained metal prongs intersecting the plastic strip body. All six prongs in the two earlier attachment-success replicas collide with solid plastic: about 73.1% of prong volume in one scene and 68.8% in the other. Source inspection shows positive surface marks over solid housings, not receiving voids. The checker passes known solid, shallow-recess and genuinely hollow calibration cases.
-
-The [text-only control](protocol/receptacle-generation.json) specifies a block, actual blind cavities and matching prongs without an image. Both responses construct real cavities directly in a closed manifold mesh. Both pass the [registered volume, bounds and collision checks](results/receptacle-control-audit.json), with zero prong/plastic overlap. [The assessment](results/receptacle-assessment.json) separates what this establishes from the original visual task.
-
-For inspection, compare the [solid geometry beneath a replica's plug](results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/under-plug.png) with the [actual openings in a text control](results/20261114T181143378123Z-receptacle-construction/construct_receptacle-1/geometry/open-receptacles.png). These derived views hide the named occluding parts only; their metadata records the visibility changes, and the retained scene files remain unchanged.
-
-The prior sculpture prompt allowed overlapping solids and did not require mechanical mating. This audit adds an independent functional criterion; it preserves the earlier attachment scores. It demonstrates available cavity-construction capability under an explicit specification, while leaving the failure to retain that property from an image to investigate. The original author's print mesh remains unavailable.
-
-There are now 22 retained experimental attempts: 20 completed answers and two earlier process timeouts, with ten executed scene bundles. The next planned comparison adds a functional-geometry requirement to the image reconstruction task without supplying the plug placement. No new cohort should be started without first checking the state and committing its protocol.
-
-## Availability
-
-The local Claude Code login needed renewal. A text-only availability check subsequently returned `PROBE_OK` from `claude-fable-5-2` via the first-party provider. No interpretation result is implied by that check.
+This repository is an independent investigation. Source imagery and saved webpages are third-party material attributed in [input provenance](inputs/provenance.json) and [source metadata](evidence/2026-11-14/sources.json); their inclusion does not establish authorship by this project.
