@@ -1,0 +1,70 @@
+{
+  "run": "20261114T175202269055Z-fidelity-check",
+  "assessor": "Codex, source review and inspection of both fixed views; not blinded to condition",
+  "conditions": {
+    "reconstruct_open": "Original baseline prompt, unchanged",
+    "reconstruct_fidelity_check": "Baseline plus general distinguishing-feature, connection-tracing and placement-check instructions; no target object names or desired attachment supplied"
+  },
+  "observations": [
+    {
+      "id": "reconstruct_open-1",
+      "attachment_category": "head_or_neck_contact",
+      "receiving_socket_depicted": false,
+      "distinct_plug": true,
+      "cable_meets_plug": true,
+      "two_empty_sockets_visible": true,
+      "tear_origin": "Eye region; not mouth-origin drool",
+      "geometry_repairs": [],
+      "source_and_view_evidence": "The model describes a plug pushed into the neck. Independent PLUG_FRONT/PLUG_D coordinates place the prongs into the neck beside the strip; both views agree."
+    },
+    {
+      "id": "reconstruct_open-2",
+      "attachment_category": "strip_contact_without_supported_socket",
+      "receiving_socket_depicted": false,
+      "distinct_plug": true,
+      "cable_meets_plug": true,
+      "two_empty_sockets_visible": true,
+      "tear_origin": "Eye region; not mouth-origin drool",
+      "geometry_repairs": [],
+      "source_and_view_evidence": "Prongs point at the lower-left side of the strip below the two outlet faces. Source defines no receiving socket at that location; both views show exposed prongs meeting the shell. This is distinguished from head contact."
+    },
+    {
+      "id": "reconstruct_fidelity_check-1",
+      "attachment_category": "strip_contact_without_supported_socket",
+      "receiving_socket_depicted": false,
+      "distinct_plug": true,
+      "cable_meets_plug": true,
+      "two_empty_sockets_visible": true,
+      "tear_origin": "Eye region; not mouth-origin drool",
+      "geometry_repairs": [],
+      "source_and_view_evidence": "The model aims its independently placed plug at the strip's lower-left corner and says the prongs penetrate there. Only the two empty outlet plates are constructed; no receiving socket is provided at the contact. Source and both views agree.",
+      "invented_or_interpreted_features": "A table slab and a forearm are added as readings of the lower contours, with those choices qualified in the answer."
+    },
+    {
+      "id": "reconstruct_fidelity_check-2",
+      "attachment_category": "head_or_neck_contact",
+      "receiving_socket_depicted": false,
+      "distinct_plug": true,
+      "cable_meets_plug": true,
+      "two_empty_sockets_visible": true,
+      "tear_origin": "Streaks are placed below the eyes; some short segments appear separated in the render, with no relocation to the mouth",
+      "geometry_repairs": [],
+      "source_and_view_evidence": "The answer explicitly elects to put the prongs into the neck rather than an outlet. Source comments and coordinates implement neck insertion, confirmed in both views.",
+      "invented_or_interpreted_features": "The lower contour is interpreted as a forearm and hand across the front."
+    }
+  ],
+  "summary": {
+    "completed_calls": 4,
+    "infrastructure_failures": 0,
+    "scripts_executed_without_geometry_repairs": 4,
+    "baseline": {"receiving_socket_depicted": 0, "head_or_neck_contact": 1, "strip_contact_without_supported_socket": 1},
+    "general_check": {"receiving_socket_depicted": 0, "head_or_neck_contact": 1, "strip_contact_without_supported_socket": 1}
+  },
+  "interpretation": [
+    "This particular general checking instruction produced no seated receiving socket in either of its two calls; the two fresh baselines had the same category counts.",
+    "This is not evidence that checking prompts never help, nor an estimate of a treatment effect. The cohort is too small, and a different general instruction or rendered feedback could differ.",
+    "The two strip-contact cases show why a binary head-versus-strip label is insufficient for fidelity: moving prongs to a shell is different from depicting a receiving socket.",
+    "Source inspection shows positive surface objects used as outlet marks in this cohort. Functional negative-volume geometry was added as a separate investigation after the fidelity protocol was committed; it is not retroactively treated as a preregistered endpoint of this round.",
+    "The model's uncertainty and interpretation statements remain properties of the responses, not independent proof of insufficient grounding in the source."
+  ]
+}

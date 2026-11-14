@@ -24,6 +24,8 @@ def mesh_stats(obj):
             "volume": abs(bm.calc_volume(signed=True)),
             "closed_manifold": bool(bm.faces) and all(edge.is_manifold for edge in bm.edges),
             "vertices": len(bm.verts), "faces": len(bm.faces),
+            "bounds_min": [min(v.co[i] for v in bm.verts) for i in range(3)] if bm.verts else None,
+            "bounds_max": [max(v.co[i] for v in bm.verts) for i in range(3)] if bm.verts else None,
         }
     finally:
         bm.free()
@@ -61,6 +63,8 @@ def overlap(body, prong, tolerance):
             "fraction_of_prong_inside_plastic": intersection["volume"] / prong_stats["volume"],
             "plastic_penetration": intersection["volume"] > tolerance,
             "operand_closed_manifold": True,
+            "body_bounds": [body_stats["bounds_min"], body_stats["bounds_max"]],
+            "prong_bounds": [prong_stats["bounds_min"], prong_stats["bounds_max"]],
         }
     finally:
         for obj in [a, b]:
@@ -118,6 +122,7 @@ def main():
         "units": "Blender model units cubed, not physical millimetres",
         "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "protocol_sha256": hashlib.sha256(args.protocol.read_bytes()).hexdigest(),
+        "protocol_path": str(args.protocol.resolve().relative_to(ROOT)),
         "blender_version": bpy.app.version_string,
         "volume_tolerance": tolerance,
         "calibration": calibrate(tolerance),
@@ -127,19 +132,39 @@ def main():
         path = ROOT / case["scene"]
         before = hashlib.sha256(path.read_bytes()).hexdigest()
         bpy.ops.wm.open_mainfile(filepath=str(path))
-        measurements = [overlap(bpy.data.objects[case["body"]], bpy.data.objects[name], tolerance) for name in case["prongs"]]
+        try:
+            measurements = [overlap(bpy.data.objects[case["body"]], bpy.data.objects[name], tolerance) for name in case["prongs"]]
+        except (ValueError, KeyError) as exc:
+            report["cases"].append({"id": case["id"], "scene": case["scene"], "scene_sha256": before,
+                                    "status": "unassessable", "reason": str(exc), "source_geometry_changed": False})
+            continue
         after = hashlib.sha256(path.read_bytes()).hexdigest()
         if before != after:
             raise ValueError("Audit changed the retained scene")
-        report["cases"].append({
+        observation = {
             "id": case["id"], "scene": case["scene"], "scene_sha256": before,
+            "status": "measured",
             "source_geometry_changed": False, "measurements": measurements,
             "all_prongs_clear_of_body": all(not m["plastic_penetration"] for m in measurements),
-        })
+        }
+        if "specification" in case:
+            spec = case["specification"]
+            epsilon = spec["tolerance"]
+            checks = {"body_volume": abs(measurements[0]["body_volume"] - spec["body_volume"]) <= epsilon,
+                      "body_bounds": all(abs(a - b) <= epsilon for aa, bb in zip(measurements[0]["body_bounds"], spec["body_bounds"]) for a, b in zip(aa, bb)),
+                      "exact_mesh_names": sorted(o.name for o in bpy.context.scene.objects if o.type == "MESH") == sorted([case["body"]] + case["prongs"])}
+            for measurement in measurements:
+                expected = spec["prongs"][measurement["prong"]]
+                checks[measurement["prong"] + "_volume"] = abs(measurement["prong_volume"] - expected["volume"]) <= epsilon
+                checks[measurement["prong"] + "_bounds"] = all(abs(a - b) <= epsilon for aa, bb in zip(measurement["prong_bounds"], expected["bounds"]) for a, b in zip(aa, bb))
+            observation["specification_checks"] = checks
+            observation["all_specification_checks_passed"] = all(checks.values())
+        report["cases"].append(observation)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"controls_passed": len(report["calibration"]), "cases": len(report["cases"]),
-                      "cases_with_plastic_penetration": sum(not c["all_prongs_clear_of_body"] for c in report["cases"])}))
+                      "cases_with_plastic_penetration": sum(c.get("all_prongs_clear_of_body") is False for c in report["cases"]),
+                      "unassessable_cases": sum(c.get("status") == "unassessable" for c in report["cases"])}))
 
 
 if __name__ == "__main__":

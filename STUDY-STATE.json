@@ -1,6 +1,6 @@
 {
   "objective": "Understand selection and preservation of distinguishing visual features and attachment relationships during image-to-3D reconstruction.",
-  "current_phase": "functional_geometry_control_prepared",
+  "current_phase": "functional_geometry_control_collecting",
   "first_round": {
     "status": "complete",
     "attempts": 16,
@@ -11,9 +11,15 @@
   },
   "second_round": {
     "protocol": "protocol/fidelity-check.json",
-    "status": "collected_and_rendered_pending_assessment",
+    "status": "complete",
     "run_directory": "results/20261114T175202269055Z-fidelity-check",
-    "planned_calls": 4
+    "planned_calls": 4,
+    "assessment": "results/fidelity-check-assessment.json",
+    "completed_calls": 4,
+    "receiving_socket_depicted": {
+      "baseline": 0,
+      "general_check": 0
+    }
   },
   "interpretive_constraints": [
     "Model-reported uncertainty does not establish ambiguity or insufficient grounding in the source.",
@@ -22,7 +28,7 @@
     "Treat infrastructure failures separately from quality; retain every attempt.",
     "No claim about proprietary internal architecture or model-wide failure rate is supported."
   ],
-  "next_action": "Collect the two text-only receptacle constructions, inspect sources, render unchanged scenes, and apply the calibrated intersection and dimensional checks. Complete second-round manual assessment.",
+  "next_action": "Inspect and render the two text-only constructions; measure collision volume and requested dimensions using calibrated geometry checks. Preserve first/second-round scores and report functional topology as a separate axis.",
   "resume_entry_points": [
     "README.md",
     "docs/study-design.md",
@@ -37,8 +43,8 @@
   },
   "third_round": {
     "protocol": "protocol/receptacle-generation.json",
-    "status": "prepared",
-    "run_directory": null,
+    "status": "collecting",
+    "run_directory": "results/20261114T181143378123Z-receptacle-construction",
     "planned_calls": 2
   }
 }
