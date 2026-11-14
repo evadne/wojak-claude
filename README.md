@@ -12,6 +12,8 @@ The current research question and hypotheses are retained in [the study design](
 
 `inputs/provenance.json` records the supplied screenshot, its literal caption-free drawing crop, and two renders published by the [benchmark](https://wojak-bench.dev.pion.dev/). The original post's text and model attribution are excluded from every model input. Image hashes are recorded again per request.
 
+[Contextual source snapshots](evidence/README.md) retain the publisher's intended subject, reported revision history and author-post context separately from model inputs, with retrieval times and hashes. The original prompt and modelling trace remain unavailable.
+
 ```sh
 /usr/bin/python3 scripts/prepare_inputs.py /path/to/screenshot.jpg
 ```

@@ -1,0 +1,18 @@
+wojak-bench 3d: blind figures from ai models
+wojak-bench 3d order a figure
+wojak-bench 3d
+wojak-bench gives an ai model a wojak drawing and asks for a figure you can hold. you pick the
+drawing and the model. nobody sees the result before it is printed, including you. it is printed
+in white pla on the office printer at andon labs in san francisco, and every result is added to
+the list below, good or bad. order a blind figure, $29
+results so far
+render of the print file, front render, front right the first one on the printer, 96% done
+WB-001
+square block, round hole
+a brainlet pushing a square block at the round hole of a shape sorter. this is the fifth version of the model. the first four were sent back. drawing brainlet model fable 5.2 size 118 × 51 × 74 mmweight 50 gmaterial white plaprint time 1 h 21 min, 370 layersmodelled for lukas
+render of the print file, front render, right side on the printer, 93% done
+WB-002
+plugged into itself
+a brainlet whose head is a power strip, with the cable plugged back into its own outlet. third version. the feedback on the first two was that the face was not dumb enough. drawing brainlet model fable 5.2 size 76 × 40 × 105 mmweight 31 gmaterial white plaprint time 1 h 2 min, 526 layersmodelled for kristoffer
+every figure is printed after it is paid for, and a person takes off the supports by hand. small print lines and marks where supports sat are part of it.
+a shop by bengt betjänt for andon labs, san francisco.

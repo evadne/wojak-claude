@@ -1,0 +1,26 @@
+[
+  {
+    "file": "evidence/2026-11-14/benchmark-home.html",
+    "url": "https://wojak-bench.dev.pion.dev/",
+    "retrieved_at": "2026-11-14T17:56:00.610261+00:00",
+    "http_status": 200,
+    "content_type": "text/html",
+    "sha256": "c0a12b57d4009f7b9a40a12bdf639bf11d04d8405891de2213b8a8b60328cc36",
+    "source_type": "Benchmark publisher",
+    "note": "Contextual evidence retained after the first experimental round. Not supplied to model sessions.",
+    "text_file": "evidence/2026-11-14/benchmark-home.txt",
+    "text_sha256": "7801d682bd312bd29949b28c2a5d4b0f29ee5a8441e414c71cf41b34b2c3223c"
+  },
+  {
+    "file": "evidence/2026-11-14/author-post-mirror.html",
+    "url": "https://www.teapaw.org/lukaspet/status/2121371593943466167",
+    "retrieved_at": "2026-11-14T17:56:00.747182+00:00",
+    "http_status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "sha256": "f513ad02dee31a9bccd66c46d4ce1cb23acb68f8488ff06d28a61f37052d7829",
+    "source_type": "Third-party mirror of author post; original URL is https://x.com/lukaspet/status/2121371593943466167",
+    "note": "Contextual evidence retained after the first experimental round. Not supplied to model sessions.",
+    "text_file": "evidence/2026-11-14/author-post-mirror.txt",
+    "text_sha256": "9329bb9b3bb4395e025848ca2d5e7807b1d017cdbbe584978cb157e2362bf66b"
+  }
+]

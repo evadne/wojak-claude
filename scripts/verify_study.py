@@ -35,6 +35,11 @@ def audit(root, allow_active=False):
 
     for name, source in load(root / "inputs/provenance.json").items():
         verify_hash(root / "inputs" / name, source["sha256"])
+    for source_list in (root / "evidence").glob("*/sources.json"):
+        for source in load(source_list):
+            verify_hash(root / source["file"], source["sha256"])
+            if "text_file" in source:
+                verify_hash(root / source["text_file"], source["text_sha256"])
     commits = set()
     for metadata_path in sorted((root / "results").glob("*/metadata.json")):
         run = metadata_path.parent
