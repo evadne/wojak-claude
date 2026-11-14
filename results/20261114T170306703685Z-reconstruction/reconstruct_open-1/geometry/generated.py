@@ -337,4 +337,3 @@ surf_line('TearR2', [(14.6, 30.6), (15.0, 28.8), (15.2, 27.2)], 0.4, MAT_BLUE, o
 for k, (tx, tz) in enumerate(((5.7, 21.2), (16.6, 14.2), (7.6, 25.2), (15.2, 27.0))):
     pt, yawt = surf(tx, tz, 0.25)
     ellipsoid('TearDrop%d' % k, pt, (0.7, 0.5, 0.95), MAT_BLUE, Matrix.Rotation(yawt, 4, 'Z'), seg=12, rings=8)
-

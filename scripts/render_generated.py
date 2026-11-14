@@ -21,7 +21,7 @@ def main():
     answer = record["parsed_answer"]
     source = answer["script"]
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "generated.py").write_text(source + "\n")
+    (args.out / "generated.py").write_text(source)
     exec(compile(source, str(args.out / "generated.py"), "exec"), {"__name__": "__main__"})
     bpy.context.view_layer.update()
     visible = [o for o in bpy.context.scene.objects if o.type in {"MESH", "CURVE", "SURFACE", "META", "FONT"} and not o.hide_render]
