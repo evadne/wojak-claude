@@ -1,0 +1,25 @@
+{
+  "source-screenshot.jpg": {
+    "source": "User-supplied screenshot",
+    "sha256": "c8dcd701a78ec5ee478d5c8fae417792d822423682e9de9ea45db8333e86c1c4"
+  },
+  "reference.png": {
+    "source": "source-screenshot.jpg",
+    "crop_xywh": [
+      484,
+      426,
+      402,
+      632
+    ],
+    "operation": "Literal pixel crop via macOS sips; PNG encoding; no generated edits",
+    "sha256": "96778866f7dd9388518e8a271a28bd159f9ec9b642824856205ca5b620060490"
+  },
+  "model-front.jpg": {
+    "source": "https://wojak-bench.dev.pion.dev/img/wb002-front.jpg",
+    "sha256": "75be5051aab50f016c9e4848fc11f5e92f99e1a7e2c71c3d419ceba9d88e7e56"
+  },
+  "model-side.jpg": {
+    "source": "https://wojak-bench.dev.pion.dev/img/wb002-side.jpg",
+    "sha256": "62e32153b1846960c4a4d0e0035afb082f0f46242eea3b255a7a55f40b53bd05"
+  }
+}
