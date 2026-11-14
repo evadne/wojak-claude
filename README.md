@@ -28,6 +28,22 @@ Each result directory retains the effective protocol, committed code revision, i
 
 The first study has three conditions with three sessions each: reference alone, sculpture alone, and comparison. Assessment is manual and must retain qualifications and contradictory evidence. The open descriptions do not name the expected objects or failure. The comparison explicitly asks about connections and therefore provides an attentional cue.
 
-## Initial status
+## Perception observations
+
+The main series completed nine calls with the requested model and no infrastructure failures. The image-ingestion pilot is retained separately. Manual assessment of every complete answer is in [perception-assessment.json](results/perception-assessment.json); raw answers are under [the main run](results/20261114T170133545682Z-perception).
+
+| Condition | Observation in these three sessions |
+| --- | --- |
+| Reference alone | All infer the self-plugging joke; all qualify the precise connection as ambiguous. |
+| Sculpture alone | All describe the cable end entering the head beside the strip; none unconditionally asserts literal socket insertion. |
+| Both together | All treat the attachment as similar; none independently identifies the author's intended connection error. All notice the relocation of tears to mouth drips. |
+
+This complicates a simple perception-failure account. The sculpture-only responses can identify the relevant attachment, while the comparison responses regard the drawing as compatible with it. The reference's intended meaning and its literal visible geometry must be scored separately. The observations cannot identify the cause of the original generation failure.
+
+## Reconstruction follow-up
+
+[The follow-up protocol](protocol/reconstruction.json) compares two open reconstruction sessions with two sessions supplying an explicit plug-in-own-socket constraint. It was committed after reading the image-ingestion pilot and before collecting reconstruction answers. The generator returns Blender Python without tools or rendered feedback; source and fixed front/oblique renders will be assessed together. This tests a restricted open-loop workflow rather than the original unknown modelling workflow.
+
+## Availability
 
 The local Claude Code login needed renewal. A text-only availability check subsequently returned `PROBE_OK` from `claude-fable-5-2` via the first-party provider. No interpretation result is implied by that check.

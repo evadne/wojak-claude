@@ -1,0 +1,78 @@
+{
+  "assessor": "Codex, manual review of all nine complete answers",
+  "run": "20261114T170133545682Z-perception",
+  "excluded_from_main_counts": ["20261114T170100451454Z-image-pilot (image-ingestion pilot retained separately; same reference prompt)"],
+  "reference_open": [
+    {
+      "id": "reference_open-1",
+      "infers_self_plugging_joke": true,
+      "establishes_literal_socket_insertion_from_pixels": false,
+      "acknowledges_attachment_ambiguity": true,
+      "evidence": "Description puts the tip at the strip/head junction. Uncertainty says it may enter the strip, the head, or rest against the junction; self-plugging is explicitly an inference."
+    },
+    {
+      "id": "reference_open-2",
+      "infers_self_plugging_joke": true,
+      "establishes_literal_socket_insertion_from_pixels": false,
+      "acknowledges_attachment_ambiguity": true,
+      "evidence": "Description and evidence alternately say strip side, strip body/base, or strip/head junction; uncertainty explicitly leaves that distinction unresolved."
+    },
+    {
+      "id": "reference_open-3",
+      "infers_self_plugging_joke": true,
+      "establishes_literal_socket_insertion_from_pixels": false,
+      "acknowledges_attachment_ambiguity": true,
+      "evidence": "Claims side insertion in the description, then notes that the plug does not appear to occupy either visible front outlet and that its exact connection is uncertain."
+    }
+  ],
+  "model_open": [
+    {
+      "id": "model_open-1",
+      "observes_head_attachment_beside_strip": true,
+      "unqualified_claim_of_socket_insertion": false,
+      "evidence": "Description and visible evidence put the thickened end into the head. Uncertainty allows head insertion, a hidden strip outlet, or a smooth merge."
+    },
+    {
+      "id": "model_open-2",
+      "observes_head_attachment_beside_strip": true,
+      "unqualified_claim_of_socket_insertion": false,
+      "evidence": "Description says the plug-like bulge enters the head beside the strip's base. Uncertainty explicitly distinguishes that observation from the inferred self-plugging joke."
+    },
+    {
+      "id": "model_open-3",
+      "observes_head_attachment_beside_strip": true,
+      "unqualified_claim_of_socket_insertion": false,
+      "evidence": "Description puts the thickened end in the head next to the strip. Uncertainty calls self-plugging approximate because the cable appears to enter the head rather than an outlet."
+    }
+  ],
+  "comparison": [
+    {
+      "id": "comparison-1",
+      "reports_changed_attachment_relation": false,
+      "treats_attachment_as_similar": true,
+      "detects_tear_to_mouth_drip_change": true,
+      "evidence": "Explicitly says the cord, strip and head connections match closely, while distinguishing plug shape. Notes uncertainty about the drawing's head/strip junction."
+    },
+    {
+      "id": "comparison-2",
+      "reports_changed_attachment_relation": false,
+      "treats_attachment_as_similar": true,
+      "detects_tear_to_mouth_drip_change": true,
+      "evidence": "Says the plug's contact point corresponds and differences do not concern how parts connect. Lists simplified plug detail and changed liquid origin."
+    },
+    {
+      "id": "comparison-3",
+      "reports_changed_attachment_relation": false,
+      "treats_attachment_as_similar": true,
+      "detects_tear_to_mouth_drip_change": true,
+      "evidence": "Says both cable ends meet the body at the strip base. Notes neither image shows prongs or a receiving socket at that junction; insertion is inferred in both."
+    }
+  ],
+  "interpretation": [
+    "These answers distinguish recognition of the intended self-plugging joke from certainty about literal attachment geometry.",
+    "The sculpture-only answers demonstrate access to the head-versus-outlet distinction under an open description prompt. The pilot does not support a blanket inability to perceive this attachment.",
+    "None of the comparisons independently endorses the author's specific attachment-mismatch judgement. This is a finding about the responses, not proof that the reference and sculpture are geometrically equivalent.",
+    "The drawing's ambiguity is a confound: a model can identify the conventional joke while declining to assert an occupied front socket. Reconstruction follow-up tests whether supplying that intended relation changes geometry.",
+    "No model-wide rate, architectural mechanism, training objective or statistically reliable treatment effect is established."
+  ]
+}
