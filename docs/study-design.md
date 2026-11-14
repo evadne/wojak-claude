@@ -32,6 +32,6 @@ The assessor knows the conditions. This small cohort can reveal examples and cou
 
 ## Retention and continuation
 
-Protocols are committed before collecting their responses. Historical protocols and raw answers are preserved, including assumptions later corrected in the current assessment. All attempts, failures, scripts, views and Blender scenes remain local and tracked by Git. The integrity checker validates provenance, run completeness and retained-source hashes. The retention manifest hashes the retained files; a Git bundle provides a portable copy of committed history.
+Protocols are committed before collecting their responses. Historical protocols and raw answers are preserved, including assumptions later corrected in the current assessment. All attempts, failures, scripts, views and Blender scenes remain local and tracked by the existing Git repository. The integrity checker validates study-specific provenance, run completeness and retained-source hashes; normal Git commits retain the work.
 
 `STUDY-STATE.json` records the current phase, relevant protocol and next action. Check it and existing run directories before starting more calls. Continue from retained results rather than repeating completed work.

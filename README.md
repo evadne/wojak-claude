@@ -4,6 +4,8 @@ Targeted probes of Claude Fable 5.2's interpretation and reconstruction of a dra
 
 This is a study of one example. It does not reproduce the original benchmark's unpublished prompt or agent workflow, and cannot establish a proprietary architectural cause or a model-wide failure rate.
 
+The current research question and hypotheses are retained in [the study design](docs/study-design.md). [STUDY-STATE.json](STUDY-STATE.json) records the active phase and continuation point. All study material belongs in this existing Git repository; normal commits are the retention mechanism.
+
 **Finding:** the disputed attachment is reproducible in our open reconstruction prompts. Both completed open reconstructions put the plug in the neck/shoulder beside the strip. Both completed reconstructions given an explicit socket constraint seat the plug on the strip's front face. The model reports uncertainty about the reference attachment, but that does not establish that the drawing lacks sufficient clues. The intervention changes interpretation, attention and geometric constraints together.
 
 ## Inputs and provenance
@@ -27,6 +29,15 @@ The prompts, repetitions, settings and scoring criteria are committed in `protoc
 ```
 
 Each result directory retains the effective protocol, committed code revision, image hashes, verbatim prompts, CLI command, raw output stream, standard error, complete CLI result and extracted answer. Authentication errors, timeouts and unexpected model IDs invalidate a call; they are not counted as model mistakes. CLI cost figures are list-price equivalents and are not a statement of additional charges to a subscription.
+
+The runner now writes raw streams to disk during inference, retaining progress even if the host is interrupted. To check the retained study without making model calls:
+
+```sh
+/usr/bin/python3 scripts/verify_study.py
+git fsck --full
+```
+
+During an active collection or before all completed scripts have been rendered, use `scripts/verify_study.py --allow-active` to report the remaining work separately from integrity errors.
 
 The first study has three conditions with three sessions each: reference alone, sculpture alone, and comparison. Assessment is manual and must retain qualifications and contradictory evidence. The open descriptions do not name the expected objects or failure. The comparison explicitly asks about connections and therefore provides an attentional cue.
 
@@ -70,6 +81,10 @@ Fidelity also requires selecting the right features. A caricature can preserve a
 The evidence supports studying visual cue use, fidelity choices and explicit relation enforcement. It does not isolate a vision encoder defect, establish an absence of spatial understanding, or show that the original benchmark harness used the same process. Because the explicit condition supplies an interpretation, makes the relation salient and specifies a constraint, its apparent benefit cannot distinguish their contributions. A stronger next study would independently establish the relevant visual cues and attachment relationships, then test their retention under changes in style, detail and viewpoint.
 
 There are nine main perception answers, four completed reconstruction answers, one separately retained image-ingestion pilot, and two retained process timeouts. [Accounting](results/accounting.json) distinguishes reported list-price equivalents from the unknown costs of aborted calls. The initial text availability checks are outside the experimental dataset.
+
+## General fidelity control
+
+[The second-round protocol](protocol/fidelity-check.json) adds only a general requirement to identify distinguishing features, trace connections and check their preservation. It supplies no object-specific attachment answer. Two fresh baseline calls run alongside two fresh general-check calls, using the original baseline prompt unchanged and a seeded shuffled dispatch order. Both conditions use a 600-second deadline. Results are pending; the protocol and scoring rules were committed before collection.
 
 ## Availability
 

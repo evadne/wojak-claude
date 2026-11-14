@@ -1,6 +1,6 @@
 {
   "objective": "Understand selection and preservation of distinguishing visual features and attachment relationships during image-to-3D reconstruction.",
-  "current_phase": "second_round_prepared",
+  "current_phase": "second_round_collecting",
   "first_round": {
     "status": "complete",
     "attempts": 16,
@@ -11,8 +11,8 @@
   },
   "second_round": {
     "protocol": "protocol/fidelity-check.json",
-    "status": "prepared",
-    "run_directory": null,
+    "status": "collecting",
+    "run_directory": "results/20261114T175202269055Z-fidelity-check",
     "planned_calls": 4
   },
   "interpretive_constraints": [
@@ -22,6 +22,10 @@
     "Treat infrastructure failures separately from quality; retain every attempt.",
     "No claim about proprietary internal architecture or model-wide failure rate is supported."
   ],
-  "next_action": "Commit the second-round protocol and runner, then collect the four-call cohort. Do not rerun completed calls based on their quality.",
-  "resume_entry_points": ["README.md", "docs/study-design.md", "STUDY-STATE.json"]
+  "next_action": "Complete the four-call cohort; inspect generated sources, render unchanged scenes, and assess both fixed views. Retain every attempt and follow the committed infrastructure recovery rule.",
+  "resume_entry_points": [
+    "README.md",
+    "docs/study-design.md",
+    "STUDY-STATE.json"
+  ]
 }
