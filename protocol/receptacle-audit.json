@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "purpose": "Test volumetric receptacle clearance separately from the depicted attachment, using the retained models that passed the explicit attachment criterion.",
+  "volume_tolerance": 0.0001,
+  "calibration": [
+    "A solid 32 by 16 by 24 block must overlap each inserted 2 by 7 by 6 prong by 84 cubic model units.",
+    "A two-unit-deep opening must leave 60 cubic units of each seven-unit-deep prong intersecting the block.",
+    "An eight-unit-deep cavity with cross-section clearance must leave zero prong/block intersection."
+  ],
+  "primary": "Measure the volume of each retained metal prong intersecting the evaluated plastic strip body at its retained seated pose. Any overlap above tolerance is incompatible with physically distinct solid parts in that pose.",
+  "cases": [
+    {
+      "id": "explicit-original",
+      "scene": "results/20261114T170306703685Z-reconstruction/reconstruct_explicit-2/geometry/scene.blend",
+      "body": "PowerStrip",
+      "prongs": ["ProngL", "ProngR", "ProngGround"]
+    },
+    {
+      "id": "explicit-replacement",
+      "scene": "results/20261114T171224010444Z-explicit-timeout-replacement-1/reconstruct_explicit-1/geometry/scene.blend",
+      "body": "PowerStrip",
+      "prongs": ["PlugBladeL", "PlugBladeR", "PlugGroundPin"]
+    }
+  ],
+  "interpretive_limits": [
+    "This audits our retained generated meshes, not the original author's unavailable print mesh.",
+    "The original reconstruction task allowed overlapping meshes and did not require mechanical mating. This adds a separate criterion rather than retroactively changing the prior attachment scores.",
+    "Positive prong/plastic intersection proves a collision in the retained pose. It does not uniquely identify whether the cause is missing cavities, wrong pin placement or another modelling decision; source inspection is needed.",
+    "Clearance in the final pose alone would not prove a collision-free insertion path, physical tolerances, electrical correctness or manufacturing suitability.",
+    "Modelled socket marks may be positive surface geometry; their visual resemblance does not establish the presence of negative volume.",
+    "This check does not require a model to adjudicate the drawing or its own output."
+  ]
+}
