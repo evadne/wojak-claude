@@ -1,0 +1,4 @@
+# These files are retained evidence; preserve bytes and original whitespace.
+evidence/**/*.html -text -whitespace
+results/**/stdout.jsonl -text
+results/**/geometry/generated.py -text -whitespace
